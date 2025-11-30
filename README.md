@@ -1,103 +1,183 @@
-# Weather Monitoring and Automation System
+# Weather Monitoring System 🌤️
 
-A production-grade weather monitoring system with real-time data collection, intelligent alerting, and a beautiful dashboard interface. Built with Python (FastAPI, Celery, MongoDB) and React (TypeScript, Material-UI).
+A modern, full-stack weather monitoring dashboard with real-time data visualization, dual theme support (dark/light), and beautiful responsive UI. Built with FastAPI (Python), React (TypeScript), and MongoDB.
 
-![Weather Dashboard](docs/dashboard-preview.png)
+[![GitHub](https://img.shields.io/badge/github-Weather__Python-blue)](https://github.com/Aditya-Takawale/Weather_Python)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+[![React](https://img.shields.io/badge/react-18.0+-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/typescript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 
 ## 🌟 Features
 
-### Backend
-- **Real-time Weather Monitoring**: Automatically fetches weather data every 30 minutes from OpenWeatherMap API
-- **Intelligent Alerts**: Configurable threshold-based alerts for temperature, humidity, and extreme weather conditions
-- **Pre-aggregated Dashboard Data**: Hourly aggregation of weather metrics for optimal performance
-- **Automated Data Cleanup**: Daily cleanup of old records to maintain database performance
-- **Production-Ready Architecture**: Repository pattern, service layer, dependency injection
-- **Async/Await Throughout**: Non-blocking operations using FastAPI and Motor (async MongoDB driver)
+- 🌡️ **Real-time Weather Data** - Live temperature, humidity, pressure, wind speed, and more
+- 📊 **Interactive Charts** - Hourly temperature bars and 7-day trend visualization
+- 🎨 **Dual Theme Support** - Beautiful dark and light themes with smooth transitions and sun/moon slider toggle
+- 📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices
+- 🔄 **Auto-refresh** - Automatic data updates every 5 minutes
+- 🎭 **Weather Animations** - Dynamic background animations based on weather conditions (rain, snow, clouds, sun, fog)
+- 📈 **Historical Data** - 7-day weather history with detailed statistics
+- 🎯 **Metric Cards** - Six highlight cards showing key weather metrics with colorful glowing effects
+- 🌈 **Production-Ready** - Clean architecture with repository pattern, service layer, and dependency injection
 
-### Frontend
-- **Beautiful Dashboard UI**: Material-UI components with custom weather-inspired theme
-- **Real-time Updates**: Auto-refresh every 5 minutes with manual refresh option
-- **Interactive Charts**: 24-hour trends, 7-day forecasts, weather distribution visualizations using Recharts
-- **Alert Management**: Visual alert panel with severity indicators and acknowledgment functionality
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **TypeScript**: Full type safety across the application
-
-### Scheduled Tasks (Celery)
-1. **Weather Fetch Task**: Runs every 30 minutes - Collects current weather data
-2. **Dashboard Aggregation Task**: Runs every hour - Pre-computes dashboard summary data
-3. **Data Cleanup Task**: Runs daily at 2 AM - Removes records older than 2 days
-4. **Alert Check Task**: Runs every 15 minutes - Monitors thresholds and creates alerts
-
-## 🏗️ Architecture
+## 🏗️ Project Structure
 
 ```
-┌─────────────────┐
-│  React Frontend │ ← Port 3000
-│   (Vite + TS)   │
-└────────┬────────┘
-         │ HTTP/REST
-┌────────▼────────┐
-│  FastAPI Backend│ ← Port 8000
-│  (Python 3.11+) │
-└────┬───────┬────┘
-     │       │
-     │       └─────────┐
-     │                 │
-┌────▼─────┐    ┌─────▼──────┐
-│ MongoDB  │    │   Redis    │
-│  (DB)    │    │ (Broker)   │
-└──────────┘    └─────┬──────┘
-                      │
-                ┌─────▼──────┐
-                │   Celery   │
-                │   Worker   │
-                └────────────┘
+Weather_Python/
+├── backend/                      # Backend API server
+│   ├── app/                      # Main application code
+│   │   ├── api/                  # API routes and endpoints
+│   │   │   └── routes/           # Route handlers (dashboard, weather, alerts)
+│   │   ├── config/               # Configuration files
+│   │   │   ├── database.py       # MongoDB connection
+│   │   │   └── settings.py       # App settings
+│   │   ├── models/               # Pydantic models
+│   │   │   ├── weather.py        # Weather data models
+│   │   │   ├── dashboard.py      # Dashboard models
+│   │   │   └── alert.py          # Alert models
+│   │   ├── repositories/         # Data access layer
+│   │   ├── services/             # Business logic layer
+│   │   ├── tasks/                # Celery background tasks
+│   │   ├── utils/                # Helper functions and utilities
+│   │   └── main.py               # FastAPI application entry point
+│   ├── scripts/                  # Utility scripts
+│   │   ├── populate_data.py              # Fetch current weather data
+│   │   ├── populate_historical_data.py   # Generate historical data
+│   │   ├── cleanup_other_cities.py       # Database cleanup
+│   │   ├── clean_database.py             # Full database reset
+│   │   ├── test_connection.py            # Test MongoDB connection
+│   │   ├── test_api_simple.py            # API endpoint tests
+│   │   └── test_system.py                # System integration tests
+│   ├── logs/                     # Application logs
+│   ├── .env.example              # Environment variables template
+│   ├── requirements.txt          # Python dependencies
+│   └── Dockerfile                # Backend Docker configuration
+│
+├── frontend/                     # React frontend application
+│   ├── src/
+│   │   ├── api/                  # API client service
+│   │   ├── components/           # React components
+│   │   │   ├── dashboard/        # Dashboard components
+│   │   │   │   ├── TemperatureGauge.tsx     # Circular temperature gauge
+│   │   │   │   ├── HourlyBarChart.tsx       # 8-hour temperature chart
+│   │   │   │   ├── HighlightCard.tsx        # Metric display cards
+│   │   │   │   ├── DailyTrendChart.tsx      # 7-day trend chart
+│   │   │   │   └── ...
+│   │   │   ├── layout/           # Layout components
+│   │   │   │   └── Header.tsx    # Header with theme toggle
+│   │   │   └── weather/          # Weather-specific components
+│   │   │       └── WeatherAnimation.tsx     # Background animations
+│   │   ├── context/              # React Context providers
+│   │   │   └── ThemeContext.tsx  # Theme state management
+│   │   ├── hooks/                # Custom React hooks
+│   │   │   ├── useWeatherData.ts # Weather data fetching
+│   │   │   └── useAlerts.ts      # Alert management
+│   │   ├── pages/                # Page components
+│   │   │   └── Dashboard.tsx     # Main dashboard page
+│   │   ├── services/             # API service layer
+│   │   ├── types/                # TypeScript type definitions
+│   │   ├── theme/                # Material-UI theme configuration
+│   │   ├── App.tsx               # Root component
+│   │   └── main.tsx              # Application entry point
+│   ├── public/                   # Static assets
+│   ├── .env.example              # Environment variables template
+│   ├── package.json              # Node dependencies
+│   ├── tsconfig.json             # TypeScript configuration
+│   ├── vite.config.ts            # Vite build configuration
+│   └── Dockerfile                # Frontend Docker configuration
+│
+├── docs/                         # Documentation
+│   ├── ARCHITECTURE.md           # System architecture details
+│   ├── PROJECT_STRUCTURE.md      # Detailed project structure
+│   ├── QUICK_START.md            # Quick start guide
+│   ├── SETUP.md                  # Setup instructions
+│   └── ...                       # Additional documentation
+│
+├── scripts/                      # Root-level utility scripts
+│   ├── setup-dev.ps1             # Development environment setup
+│   └── start.ps1                 # Application startup script
+│
+├── .gitignore                    # Git ignore rules
+├── docker-compose.yml            # Docker orchestration
+├── package.json                  # Root package configuration
+└── README.md                     # This file
 ```
-
-### Tech Stack
-
-**Backend:**
-- FastAPI 0.104+ (async web framework)
-- Celery 5.3.4 + Celery Beat (task scheduling)
-- Motor 3.3+ (async MongoDB driver)
-- Pydantic v2 (data validation)
-- Redis 5.0 (message broker)
-- httpx (async HTTP client)
-
-**Frontend:**
-- React 18.2+ (UI library)
-- TypeScript 5.3+ (type safety)
-- Material-UI v5.15+ (component library)
-- Recharts 2.10+ (data visualization)
-- Axios (HTTP client)
-- Vite 5.0+ (build tool)
-
-**Database:**
-- MongoDB 7.0+ (document database)
-
-**External APIs:**
-- OpenWeatherMap API (weather data source)
 
 ## 📋 Prerequisites
 
-- Python 3.11 or higher
-- Node.js 18+ and npm/yarn
-- MongoDB 7.0+
-- Redis 5.0+
-- OpenWeatherMap API key (free tier available)
+- **Python** 3.11 or higher
+- **Node.js** 18+ and npm
+- **MongoDB** 4.4+
+- **OpenWeather API Key** - [Get one free here](https://openweathermap.org/api)
 
 ## 🚀 Quick Start
 
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd weather_python
+git clone https://github.com/Aditya-Takawale/Weather_Python.git
+cd Weather_Python
 ```
 
 ### 2. Backend Setup
 
-#### Option A: Using Docker Compose (Recommended)
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate          # On Windows
+# source venv/bin/activate     # On Linux/Mac
+pip install -r requirements.txt
+```
+
+### 3. Configure Environment
+
+Create `backend/.env` file:
+```env
+OPENWEATHER_API_KEY=your_api_key_here
+MONGODB_URL=mongodb://localhost:27017
+DATABASE_NAME=weather_dashboard
+LOG_LEVEL=INFO
+```
+
+### 4. Populate Data
+
+```bash
+# Generate 7 days of historical data
+python scripts/populate_historical_data.py
+
+# Fetch current weather data
+python scripts/populate_data.py
+```
+
+### 5. Start Backend
+
+```bash
+set PYTHONPATH=c:\path\to\Weather_Python\backend     # Adjust path as needed
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 6. Frontend Setup
+
+```bash
+cd frontend
+npm install
+```
+
+Create `frontend/.env` file:
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+### 7. Start Frontend
+
+```bash
+npm run dev
+```
+
+### 8. Access Application
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
 
 ```bash
 # Copy environment file

@@ -197,8 +197,8 @@ dashboardsummaries ← Pre-aggregated for performance
 MONGODB_URL=mongodb://localhost:27017
 MONGODB_DB_NAME=weather_dashboard
 
-# OpenWeatherMap API (Your key)
-OPENWEATHER_API_KEY=b369be1b643c9bc1422d0e5d157aa3a8
+# OpenWeatherMap API (Get your free key from https://openweathermap.org/api)
+OPENWEATHER_API_KEY=your_openweather_api_key_here
 OPENWEATHER_BASE_URL=https://api.openweathermap.org/data/2.5
 OPENWEATHER_CITY=Pune
 OPENWEATHER_COUNTRY_CODE=IN

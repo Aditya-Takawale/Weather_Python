@@ -17,7 +17,7 @@ Your Weather Monitoring System has been successfully configured to work with you
   - `alertconfigs` ✅
 
 ### 2. API Configuration
-- **OpenWeatherMap API Key**: `b369be1b643c9bc1422d0e5d157aa3a8` ✅
+- **OpenWeatherMap API Key**: Configured in `.env` file ✅
 - **API Test**: PASSED ✅
 - **Current Weather**: 27.45°C in Pune, IN ✅
 - **Connection**: Working perfectly ✅

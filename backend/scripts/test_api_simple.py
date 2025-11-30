@@ -7,7 +7,9 @@ import urllib.request
 import json
 
 # Your configuration
-API_KEY = "b369be1b643c9bc1422d0e5d157aa3a8"
+# Get API key from environment or settings
+from app.config.settings import settings
+API_KEY = settings.OPENWEATHER_API_KEY
 CITY = "Pune"
 COUNTRY = "IN"
 API_URL = f"https://api.openweathermap.org/data/2.5/weather?q={CITY},{COUNTRY}&appid={API_KEY}&units=metric"
