@@ -1,0 +1,149 @@
+# Weather Monitoring System - Docker Compose Configuration
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: weather_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    environment:
+      - MONGO_INITDB_DATABASE=weather_dashboard
+    networks:
+      - weather_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/weather_dashboard --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis (Message Broker for Celery)
+  redis:
+    image: redis:7-alpine
+    container_name: weather_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - weather_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: weather_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    env_file:
+      - ./backend/.env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - weather_network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Celery Worker
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: weather_celery_worker
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    env_file:
+      - ./backend/.env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - weather_network
+    command: celery -A app.tasks.celery_app worker --loglevel=info
+
+  # Celery Beat (Task Scheduler)
+  celery_beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: weather_celery_beat
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    env_file:
+      - ./backend/.env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - weather_network
+    command: celery -A app.tasks.celery_app beat --loglevel=info
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: weather_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    depends_on:
+      - api
+    networks:
+      - weather_network
+    command: npm start
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  weather_network:
+    driver: bridge

@@ -1,0 +1,14 @@
+{
+  "name": "weather-monitoring-system",
+  "version": "1.0.0",
+  "description": "Full-stack Weather Monitoring and Automation System",
+  "scripts": {
+    "start": "concurrently \"npm run backend\" \"npm run frontend\" --names \"API,UI\" --prefix-colors \"blue,green\"",
+    "backend": "cd backend && .\\venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "frontend": "cd frontend && npm run dev",
+    "stop": "echo Use Ctrl+C to stop all services"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
