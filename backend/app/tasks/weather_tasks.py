@@ -19,15 +19,14 @@ class DatabaseTask(Task):
     _db_connected = False
     
     def run(self, *args, **kwargs):
-        """Placeholder run method - actual work done in concrete tasks"""
+        """Abstract run method implementation"""
     
     def before_start(self, task_id, args, kwargs):
-        """Connect to database before task starts"""
+        """Initialize database connection"""
         if not self._db_connected:
             loop = asyncio.get_event_loop()
             loop.run_until_complete(DatabaseManager.connect())
             self._db_connected = True
-            logger.info("Database connected for Celery task")
 
 
 @celery_app.task(
@@ -39,8 +38,8 @@ class DatabaseTask(Task):
 )
 def fetch_weather_data(self, city: str) -> dict:
     """
-    Celery Task 1: Fetch weather data from OpenWeatherMap API
-    Runs every 30 minutes
+    Fetch weather data from OpenWeatherMap API and store in database.
+    Scheduled to run every 30 minutes.
     
     Args:
         city: City name to fetch weather for
@@ -64,12 +63,10 @@ def fetch_weather_data(self, city: str) -> dict:
             }
         else:
             logger.error("[FAILED] Weather data fetch failed for %s", city)
-            # Retry the task
             raise self.retry(exc=Exception("Failed to fetch weather data"))
             
     except Exception as exc:
         logger.error("[ERROR] Error in weather fetch task: %s", exc)
-        # Retry with exponential backoff
         raise self.retry(exc=exc, countdown=2 ** self.request.retries * 60)
 
 

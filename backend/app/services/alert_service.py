@@ -303,9 +303,6 @@ class AlertService:
             
             logger.warning(notification_message)
             
-            # NOTE: Additional notification channels can be implemented:
-            # - Email via SMTP, SMS via Twilio, Slack/Discord webhook, Push notifications
-            
         except Exception as e:
             logger.error("Error sending notification: %s", e)
     

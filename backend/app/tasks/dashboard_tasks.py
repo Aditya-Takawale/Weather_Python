@@ -20,16 +20,9 @@ logger = get_logger(__name__)
 )
 def populate_dashboard_summary(self, city: str) -> dict:
     """
-    Celery Task 2: Generate and store dashboard summary data
-    Runs every hour
-    
-    This is the CRITICAL performance optimization task that:
-    - Aggregates last 24 hours of raw weather data
-    - Computes today's statistics (min, max, avg)
-    - Generates hourly trends (24 data points)
-    - Generates daily trends (7 days)
-    - Calculates weather distribution
-    - Stores pre-computed summary for instant dashboard loading
+    Generate and store dashboard summary data.
+    Aggregates weather data and computes statistics for fast dashboard loading.
+    Scheduled to run every hour.
     
     Args:
         city: City name
@@ -40,10 +33,8 @@ def populate_dashboard_summary(self, city: str) -> dict:
     logger.info("[DASHBOARD] Starting dashboard summary population task for %s", city)
     
     try:
-        # Run async service method
         loop = asyncio.get_event_loop()
         
-        # Generate comprehensive dashboard summary
         summary = loop.run_until_complete(
             DashboardService.generate_dashboard_summary(city)
         )
@@ -56,7 +47,6 @@ def populate_dashboard_summary(self, city: str) -> dict:
                 "message": "No weather data available for aggregation"
             }
         
-        # Save summary to database
         success = loop.run_until_complete(
             DashboardService.save_dashboard_summary(summary)
         )
@@ -80,7 +70,7 @@ def populate_dashboard_summary(self, city: str) -> dict:
             
     except Exception as exc:
         logger.error("[ERROR] Error in dashboard population task: %s", exc)
-        raise self.retry(exc=exc, countdown=120)  # Retry after 2 minutes
+        raise self.retry(exc=exc, countdown=120)
 
 
 @celery_app.task(

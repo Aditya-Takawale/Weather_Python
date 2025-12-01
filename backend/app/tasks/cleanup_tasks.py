@@ -20,11 +20,8 @@ logger = get_logger(__name__)
 )
 def cleanup_old_data(self, retention_days: int = 2) -> dict:
     """
-    Celery Task 3: Clean up old weather data
-    Runs daily at 2:00 AM
-    
-    Performs soft-delete on weather records older than retention_days.
-    This helps maintain database performance and manage storage.
+    Clean up old weather data to maintain database performance.
+    Soft-deletes records older than retention_days. Runs daily at 2:00 AM.
     
     Args:
         retention_days: Number of days to retain data (default: 2)
@@ -37,7 +34,6 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
     try:
         loop = asyncio.get_event_loop()
         
-        # Soft delete old weather records
         deleted_count = loop.run_until_complete(
             WeatherRepository.soft_delete_old_records(days=retention_days)
         )

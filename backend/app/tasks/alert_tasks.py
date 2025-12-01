@@ -20,17 +20,8 @@ logger = get_logger(__name__)
 )
 def check_weather_alerts(self, city: str) -> dict:
     """
-    Celery Task 4: Check weather conditions and create alerts
-    Runs every 15 minutes
-    
-    Monitors weather conditions against defined thresholds:
-    - High temperature (> 35°C)
-    - Low temperature (< 5°C)
-    - High humidity (> 80%)
-    - Extreme weather (Storm, Thunderstorm, etc.)
-    
-    Creates alert logs and sends notifications when thresholds are exceeded.
-    Implements cooldown period to prevent duplicate alerts.
+    Monitor weather conditions and create alerts for threshold violations.
+    Runs every 15 minutes with cooldown to prevent alert spam.
     
     Args:
         city: City name
@@ -41,10 +32,8 @@ def check_weather_alerts(self, city: str) -> dict:
     logger.info("[ALERT] Starting weather alert check task for %s", city)
     
     try:
-        # Run async service method
         loop = asyncio.get_event_loop()
         
-        # Check all alert conditions
         alert_ids = loop.run_until_complete(
             AlertService.check_and_create_alerts(city)
         )
@@ -68,7 +57,7 @@ def check_weather_alerts(self, city: str) -> dict:
             
     except Exception as exc:
         logger.error("[ERROR] Error in weather alert check task: %s", exc)
-        raise self.retry(exc=exc, countdown=60)  # Retry after 1 minute
+        raise self.retry(exc=exc, countdown=60)
 
 
 @celery_app.task(
@@ -141,8 +130,6 @@ def send_alert_digest(city: str, hours: int = 24) -> dict:
         if recent_alerts:
             logger.info("Alert digest: %s alerts in last %s hours", len(recent_alerts), hours)
             
-            # NOTE: Email digest formatting can be implemented here
-            # For now, just log summary
             digest_summary = {
                 "city": city,
                 "period_hours": hours,
