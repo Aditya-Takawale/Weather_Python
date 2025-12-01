@@ -37,10 +37,10 @@ celery_app.conf.update(
 
 # Celery Beat schedule configuration
 celery_app.conf.beat_schedule = {
-    # Task 1: Fetch weather data every 30 minutes
+    # Task 1: Fetch weather data every 10 minutes
     'fetch-weather-data': {
         'task': 'app.tasks.weather_tasks.fetch_weather_data',
-        'schedule': crontab(minute='*/30'),  # Every 30 minutes
+        'schedule': crontab(minute='*/10'),  # Every 10 minutes
         'args': (settings.OPENWEATHER_CITY,),
         'options': {'queue': 'weather_queue'}
     },
