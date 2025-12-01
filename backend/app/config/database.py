@@ -36,14 +36,16 @@ class DatabaseManager:
                 settings.MONGODB_URL,
                 maxPoolSize=settings.MONGODB_MAX_POOL_SIZE,
                 minPoolSize=settings.MONGODB_MIN_POOL_SIZE,
-            serverSelectionTimeoutMS=5000
-        )
-        
-        await cls._client.admin.command('ping')
-        
-        cls._database = cls._client[settings.MONGODB_DB_NAME]  # type: ignore
-        
-        await cls._create_indexes()            logger.info("Successfully connected to MongoDB database: %s", settings.MONGODB_DB_NAME)
+                serverSelectionTimeoutMS=5000
+            )
+            
+            await cls._client.admin.command('ping')
+            
+            cls._database = cls._client[settings.MONGODB_DB_NAME]  # type: ignore
+            
+            await cls._create_indexes()
+            
+            logger.info("Successfully connected to MongoDB database: %s", settings.MONGODB_DB_NAME)
             
         except ConnectionFailure as e:
             logger.error("Failed to connect to MongoDB: %s", e)
