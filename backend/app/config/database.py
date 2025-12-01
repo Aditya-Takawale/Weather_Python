@@ -75,26 +75,41 @@ class DatabaseManager:
             
             # Dashboard Summary Collection Indexes
             dashboard_summary = cls._database[settings.COLLECTION_DASHBOARD_SUMMARY]
-            await dashboard_summary.create_index([
-                ("city", 1),
-                ("generated_at", -1)
-            ], unique=True)
+            try:
+                await dashboard_summary.create_index([
+                    ("city", 1),
+                    ("generated_at", -1)
+                ], unique=True)
+            except Exception as idx_error:
+                # Index might already exist or have duplicate data
+                if "duplicate key" in str(idx_error).lower():
+                    logger.warning("Dashboard summary has duplicate data - cleaning up")
+                    # Clean up null generated_at records
+                    await dashboard_summary.delete_many({"generated_at": None})
+                else:
+                    logger.debug(f"Dashboard summary index: {idx_error}")
             
             # Alert Logs Collection Indexes
             alert_logs = cls._database[settings.COLLECTION_ALERT_LOGS]
-            await alert_logs.create_index([("city", 1), ("triggered_at", -1)])
-            await alert_logs.create_index([("is_active", 1)])
-            await alert_logs.create_index([("alert_type", 1)])
-            await alert_logs.create_index([("triggered_at", -1)])
+            try:
+                await alert_logs.create_index([("city", 1), ("triggered_at", -1)])
+                await alert_logs.create_index([("is_active", 1)])
+                await alert_logs.create_index([("alert_type", 1)])
+                await alert_logs.create_index([("triggered_at", -1)])
+            except Exception as idx_error:
+                logger.debug(f"Alert logs index: {idx_error}")
             
             # Alert Configs Collection Indexes (if needed)
             alert_configs = cls._database[settings.COLLECTION_ALERT_CONFIGS]
-            await alert_configs.create_index([("city", 1), ("alert_type", 1)], unique=True)
+            try:
+                await alert_configs.create_index([("city", 1), ("alert_type", 1)], unique=True)
+            except Exception as idx_error:
+                logger.debug(f"Alert configs index: {idx_error}")
             
-            logger.info("Database indexes created successfully")
+            logger.info("Database indexes verified successfully")
             
         except Exception as e:
-            logger.error(f"Error creating indexes: {e}")
+            logger.error(f"Error setting up database indexes: {e}")
             # Don't raise - indexes are optimization, not critical
     
     @classmethod

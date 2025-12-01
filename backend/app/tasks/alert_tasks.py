@@ -38,7 +38,7 @@ def check_weather_alerts(self, city: str) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info(f"🚨 Starting weather alert check task for {city}")
+    logger.info(f"[ALERT] Starting weather alert check task for {city}")
     
     try:
         # Run async service method
@@ -50,7 +50,7 @@ def check_weather_alerts(self, city: str) -> dict:
         )
         
         if alert_ids:
-            logger.warning(f"⚠️  {len(alert_ids)} weather alert(s) triggered for {city}")
+            logger.warning(f"[WARNING] {len(alert_ids)} weather alert(s) triggered for {city}")
             return {
                 "status": "alerts_triggered",
                 "city": city,
@@ -59,7 +59,7 @@ def check_weather_alerts(self, city: str) -> dict:
                 "message": f"Created {len(alert_ids)} weather alert(s)"
             }
         else:
-            logger.info(f"✅ No alerts triggered for {city} (conditions normal)")
+            logger.info(f"[SUCCESS] No alerts triggered for {city} (conditions normal)")
             return {
                 "status": "no_alerts",
                 "city": city,
@@ -67,7 +67,7 @@ def check_weather_alerts(self, city: str) -> dict:
             }
             
     except Exception as exc:
-        logger.error(f"❌ Error in weather alert check task: {exc}")
+        logger.error(f"[ERROR] Error in weather alert check task: {exc}")
         raise self.retry(exc=exc, countdown=60)  # Retry after 1 minute
 
 
@@ -123,7 +123,7 @@ def send_alert_digest(city: str, hours: int = 24) -> dict:
     Returns:
         Task result
     """
-    logger.info(f"📧 Generating alert digest for {city} (last {hours} hours)")
+    logger.info(f"[DIGEST] Generating alert digest for {city} (last {hours} hours)")
     
     try:
         loop = asyncio.get_event_loop()

@@ -27,21 +27,21 @@ async def lifespan(app: FastAPI):
     Handles startup and shutdown events
     """
     # Startup
-    logger.info("🚀 Starting Weather Monitoring System API")
+    logger.info("[START] Weather Monitoring System API")
     logger.info(f"Environment: {'Development' if settings.DEBUG else 'Production'}")
     
     try:
         # Connect to MongoDB
         await DatabaseManager.connect()
-        logger.info("✅ Database connected successfully")
+        logger.info("[SUCCESS] Database connected successfully")
         
         yield
         
     finally:
         # Shutdown
-        logger.info("🛑 Shutting down Weather Monitoring System API")
+        logger.info("[STOP] Shutting down Weather Monitoring System API")
         await DatabaseManager.disconnect()
-        logger.info("✅ Database disconnected")
+        logger.info("[SUCCESS] Database disconnected")
 
 
 # Create FastAPI application

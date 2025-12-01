@@ -37,7 +37,7 @@ def populate_dashboard_summary(self, city: str) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info(f"📊 Starting dashboard summary population task for {city}")
+    logger.info(f"[DASHBOARD] Starting dashboard summary population task for {city}")
     
     try:
         # Run async service method
@@ -49,7 +49,7 @@ def populate_dashboard_summary(self, city: str) -> dict:
         )
         
         if not summary:
-            logger.warning(f"⚠️  No data available to generate dashboard summary for {city}")
+            logger.warning(f"[WARNING] No data available to generate dashboard summary for {city}")
             return {
                 "status": "no_data",
                 "city": city,
@@ -62,7 +62,7 @@ def populate_dashboard_summary(self, city: str) -> dict:
         )
         
         if success:
-            logger.info(f"✅ Dashboard summary populated successfully for {city}")
+            logger.info(f"[SUCCESS] Dashboard summary populated successfully for {city}")
             return {
                 "status": "success",
                 "city": city,
@@ -75,11 +75,11 @@ def populate_dashboard_summary(self, city: str) -> dict:
                 }
             }
         else:
-            logger.error(f"❌ Failed to save dashboard summary for {city}")
+            logger.error(f"[FAILED] Failed to save dashboard summary for {city}")
             raise self.retry(exc=Exception("Failed to save dashboard summary"))
             
     except Exception as exc:
-        logger.error(f"❌ Error in dashboard population task: {exc}")
+        logger.error(f"[ERROR] Error in dashboard population task: {exc}")
         raise self.retry(exc=exc, countdown=120)  # Retry after 2 minutes
 
 

@@ -32,7 +32,7 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info(f"🧹 Starting data cleanup task (retention: {retention_days} days)")
+    logger.info(f"[CLEANUP] Starting data cleanup task (retention: {retention_days} days)")
     
     try:
         loop = asyncio.get_event_loop()
@@ -42,7 +42,7 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
             WeatherRepository.soft_delete_old_records(days=retention_days)
         )
         
-        logger.info(f"✅ Data cleanup completed: {deleted_count} records marked as deleted")
+        logger.info(f"[SUCCESS] Data cleanup completed: {deleted_count} records marked as deleted")
         
         return {
             "status": "success",
@@ -52,7 +52,7 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
         }
         
     except Exception as exc:
-        logger.error(f"❌ Error in data cleanup task: {exc}")
+        logger.error(f"[ERROR] Error in data cleanup task: {exc}")
         return {
             "status": "error",
             "message": str(exc)
@@ -74,7 +74,7 @@ def hard_delete_old_data(days: int = 7) -> dict:
     Returns:
         Task result
     """
-    logger.info(f"🗑️  Starting hard delete task (older than {days} days)")
+    logger.info(f"[DELETE] Starting hard delete task (older than {days} days)")
     
     try:
         loop = asyncio.get_event_loop()
@@ -83,7 +83,7 @@ def hard_delete_old_data(days: int = 7) -> dict:
             WeatherRepository.hard_delete_old_records(days=days)
         )
         
-        logger.info(f"✅ Hard delete completed: {deleted_count} records permanently removed")
+        logger.info(f"[SUCCESS] Hard delete completed: {deleted_count} records permanently removed")
         
         return {
             "status": "success",
@@ -110,7 +110,7 @@ def cleanup_old_alerts(days: int = 30) -> dict:
     Returns:
         Task result
     """
-    logger.info(f"🧹 Starting alert cleanup task (older than {days} days)")
+    logger.info(f"[CLEANUP] Starting alert cleanup task (older than {days} days)")
     
     try:
         loop = asyncio.get_event_loop()
@@ -119,7 +119,7 @@ def cleanup_old_alerts(days: int = 30) -> dict:
             AlertRepository.delete_old_alerts(days=days)
         )
         
-        logger.info(f"✅ Alert cleanup completed: {deleted_count} alerts removed")
+        logger.info(f"[SUCCESS] Alert cleanup completed: {deleted_count} alerts removed")
         
         return {
             "status": "success",
@@ -144,7 +144,7 @@ def optimize_database() -> dict:
     Returns:
         Task result
     """
-    logger.info("🔧 Starting database optimization task")
+    logger.info("[OPTIMIZE] Starting database optimization task")
     
     try:
         # MongoDB automatically manages indexes, but we can log statistics

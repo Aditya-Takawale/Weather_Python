@@ -45,7 +45,7 @@ def fetch_weather_data(self, city: str) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info(f"🌤️  Starting weather data fetch task for {city}")
+    logger.info(f"[WEATHER] Starting weather data fetch task for {city}")
     
     try:
         # Run async service method
@@ -53,19 +53,19 @@ def fetch_weather_data(self, city: str) -> dict:
         success = loop.run_until_complete(WeatherService.fetch_and_store_weather(city))
         
         if success:
-            logger.info(f"✅ Weather data fetch successful for {city}")
+            logger.info(f"[SUCCESS] Weather data fetch successful for {city}")
             return {
                 "status": "success",
                 "city": city,
                 "message": "Weather data fetched and stored successfully"
             }
         else:
-            logger.error(f"❌ Weather data fetch failed for {city}")
+            logger.error(f"[FAILED] Weather data fetch failed for {city}")
             # Retry the task
             raise self.retry(exc=Exception("Failed to fetch weather data"))
             
     except Exception as exc:
-        logger.error(f"❌ Error in weather fetch task: {exc}")
+        logger.error(f"[ERROR] Error in weather fetch task: {exc}")
         # Retry with exponential backoff
         raise self.retry(exc=exc, countdown=2 ** self.request.retries * 60)
 
