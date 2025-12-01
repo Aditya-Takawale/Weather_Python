@@ -33,7 +33,7 @@ const HourlyTrendChart: React.FC<HourlyTrendChartProps> = ({ data }) => {
   const [metric, setMetric] = React.useState<'temperature' | 'humidity'>('temperature');
 
   const handleMetricChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newMetric: 'temperature' | 'humidity' | null
   ) => {
     if (newMetric !== null) {

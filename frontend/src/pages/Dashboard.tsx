@@ -12,14 +12,7 @@ import {
   Alert,
   Typography,
 } from '@mui/material';
-import {
-  WbSunny,
-  NightsStay,
-  Thermostat,
-  Water,
-  Visibility,
-  Air,
-} from '@mui/icons-material';
+
 import { format } from 'date-fns';
 import { useTheme } from '../context/ThemeContext';
 import Header from '../components/layout/Header';
@@ -27,10 +20,8 @@ import TemperatureGauge from '../components/dashboard/TemperatureGauge';
 import HourlyBarChart from '../components/dashboard/HourlyBarChart';
 import HighlightCard from '../components/dashboard/HighlightCard';
 import DailyTrendChart from '../components/dashboard/DailyTrendChart';
-import AlertsPanel from '../components/dashboard/AlertsPanel';
 import WeatherAnimation from '../components/weather/WeatherAnimation';
 import { useWeatherData } from '../hooks/useWeatherData';
-import { useAlerts } from '../hooks/useAlerts';
 
 const Dashboard: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -43,25 +34,8 @@ const Dashboard: React.FC = () => {
     lastUpdated,
   } = useWeatherData('Pune', true, 300000); // Auto-refresh every 5 minutes
 
-  const {
-    alerts,
-    loading: alertsLoading,
-    error: alertsError,
-    refetch: refetchAlerts,
-    acknowledgeAlert,
-  } = useAlerts('Pune', true, 60000); // Auto-refresh every 1 minute
-
   const handleRefresh = () => {
     refetchWeather();
-    refetchAlerts();
-  };
-
-  const handleAcknowledgeAlert = async (alertId: string) => {
-    try {
-      await acknowledgeAlert(alertId);
-    } catch (error) {
-      console.error('Failed to acknowledge alert:', error);
-    }
   };
 
   // Loading State

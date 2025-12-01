@@ -4,7 +4,6 @@ Common utility functions used across the application
 """
 
 from datetime import datetime, timezone
-from typing import Optional
 
 
 def get_current_timestamp() -> datetime:

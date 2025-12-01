@@ -10,7 +10,7 @@ from bson import ObjectId
 
 from ..config.database import DatabaseManager
 from ..config.settings import settings
-from ..models.alert import AlertLog, AlertType, AlertSeverity
+from ..models.alert import AlertLog, AlertType
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -20,7 +20,7 @@ class AlertRepository:
     """Repository for alertlogs collection operations"""
     
     @classmethod
-    def _get_collection(cls) -> AsyncIOMotorCollection:
+    def _get_collection(cls) -> AsyncIOMotorCollection:  # type: ignore
         """Get alert logs collection"""
         return DatabaseManager.get_collection(settings.COLLECTION_ALERT_LOGS)
     
@@ -40,12 +40,12 @@ class AlertRepository:
             document = alert.model_dump()
             
             result = await collection.insert_one(document)
-            logger.info(f"Inserted alert: {alert.alert_type} for {alert.city}")
+            logger.info("Inserted alert: %s for %s", alert.alert_type, alert.city)
             
             return str(result.inserted_id)
             
         except Exception as e:
-            logger.error(f"Error inserting alert: {e}")
+            logger.error("Error inserting alert: %s", e)
             raise
     
     @classmethod
@@ -70,7 +70,7 @@ class AlertRepository:
             return document
             
         except Exception as e:
-            logger.error(f"Error fetching alert by ID: {e}")
+            logger.error("Error fetching alert by ID: %s", e)
             raise
     
     @classmethod
@@ -101,7 +101,7 @@ class AlertRepository:
             return documents
             
         except Exception as e:
-            logger.error(f"Error fetching active alerts: {e}")
+            logger.error("Error fetching active alerts: %s", e)
             raise
     
     @classmethod
@@ -145,7 +145,7 @@ class AlertRepository:
             return documents
             
         except Exception as e:
-            logger.error(f"Error fetching recent alerts: {e}")
+            logger.error("Error fetching recent alerts: %s", e)
             raise
     
     @classmethod
@@ -180,7 +180,7 @@ class AlertRepository:
             return count > 0
             
         except Exception as e:
-            logger.error(f"Error checking recent similar alert: {e}")
+            logger.error("Error checking recent similar alert: %s", e)
             raise
     
     @classmethod
@@ -210,14 +210,14 @@ class AlertRepository:
             success = result.modified_count > 0
             
             if success:
-                logger.info(f"Acknowledged alert: {alert_id}")
+                logger.info("Acknowledged alert: %s", alert_id)
             else:
-                logger.warning(f"Alert not found or already acknowledged: {alert_id}")
+                logger.warning("Alert not found or already acknowledged: %s", alert_id)
             
             return success
             
         except Exception as e:
-            logger.error(f"Error acknowledging alert: {e}")
+            logger.error("Error acknowledging alert: %s", e)
             raise
     
     @classmethod
@@ -279,7 +279,7 @@ class AlertRepository:
             }
             
         except Exception as e:
-            logger.error(f"Error calculating alert stats: {e}")
+            logger.error("Error calculating alert stats: %s", e)
             raise
     
     @classmethod
@@ -303,10 +303,10 @@ class AlertRepository:
             )
             
             count = result.deleted_count
-            logger.info(f"Deleted {count} alert logs older than {days} days")
+            logger.info("Deleted %s alert logs older than %s days", count, days)
             
             return count
             
         except Exception as e:
-            logger.error(f"Error deleting old alerts: {e}")
+            logger.error("Error deleting old alerts: %s", e)
             raise

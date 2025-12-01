@@ -11,7 +11,6 @@ import {
   Cell,
   ResponsiveContainer,
   Tooltip,
-  Legend,
 } from 'recharts';
 
 interface WeatherDistributionProps {

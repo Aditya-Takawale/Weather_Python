@@ -3,7 +3,6 @@ Dashboard Summary Repository
 Database operations for dashboard summary data
 """
 
-from datetime import datetime
 from typing import Optional, Dict, Any
 from motor.motor_asyncio import AsyncIOMotorCollection
 
@@ -19,7 +18,7 @@ class DashboardRepository:
     """Repository for dashboardsummaries collection operations"""
     
     @classmethod
-    def _get_collection(cls) -> AsyncIOMotorCollection:
+    def _get_collection(cls) -> AsyncIOMotorCollection:  # type: ignore
         """Get dashboard summaries collection"""
         return DatabaseManager.get_collection(settings.COLLECTION_DASHBOARD_SUMMARY)
     
@@ -48,15 +47,15 @@ class DashboardRepository:
             
             if result.upserted_id:
                 doc_id = str(result.upserted_id)
-                logger.info(f"Inserted new dashboard summary for {summary.city}")
+                logger.info("Inserted new dashboard summary for %s", summary.city)
             else:
                 doc_id = str(result.modified_count)
-                logger.info(f"Updated dashboard summary for {summary.city}")
+                logger.info("Updated dashboard summary for %s", summary.city)
             
             return doc_id
             
         except Exception as e:
-            logger.error(f"Error upserting dashboard summary: {e}")
+            logger.error("Error upserting dashboard summary: %s", e)
             raise
     
     @classmethod
@@ -89,7 +88,7 @@ class DashboardRepository:
             return document
             
         except Exception as e:
-            logger.error(f"Error fetching latest summary: {e}")
+            logger.error("Error fetching latest summary: %s", e)
             raise
     
     @classmethod
@@ -128,12 +127,12 @@ class DashboardRepository:
             )
             
             count = result.deleted_count
-            logger.info(f"Deleted {count} old dashboard summaries for {city}")
+            logger.info("Deleted %s old dashboard summaries for %s", count, city)
             
             return count
             
         except Exception as e:
-            logger.error(f"Error deleting old summaries: {e}")
+            logger.error("Error deleting old summaries: %s", e)
             raise
     
     @classmethod
@@ -153,5 +152,5 @@ class DashboardRepository:
             return count
             
         except Exception as e:
-            logger.error(f"Error counting summaries: {e}")
+            logger.error("Error counting summaries: %s", e)
             raise

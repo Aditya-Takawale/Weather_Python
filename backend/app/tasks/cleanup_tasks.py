@@ -32,7 +32,7 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info(f"[CLEANUP] Starting data cleanup task (retention: {retention_days} days)")
+    logger.info("[CLEANUP] Starting data cleanup task (retention: %s days)", retention_days)
     
     try:
         loop = asyncio.get_event_loop()

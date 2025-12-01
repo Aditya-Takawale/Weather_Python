@@ -37,7 +37,7 @@ def populate_dashboard_summary(self, city: str) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info(f"[DASHBOARD] Starting dashboard summary population task for {city}")
+    logger.info("[DASHBOARD] Starting dashboard summary population task for %s", city)
     
     try:
         # Run async service method
@@ -49,7 +49,7 @@ def populate_dashboard_summary(self, city: str) -> dict:
         )
         
         if not summary:
-            logger.warning(f"[WARNING] No data available to generate dashboard summary for {city}")
+            logger.warning("[WARNING] No data available to generate dashboard summary for %s", city)
             return {
                 "status": "no_data",
                 "city": city,
@@ -62,7 +62,7 @@ def populate_dashboard_summary(self, city: str) -> dict:
         )
         
         if success:
-            logger.info(f"[SUCCESS] Dashboard summary populated successfully for {city}")
+            logger.info("[SUCCESS] Dashboard summary populated successfully for %s", city)
             return {
                 "status": "success",
                 "city": city,
@@ -75,11 +75,11 @@ def populate_dashboard_summary(self, city: str) -> dict:
                 }
             }
         else:
-            logger.error(f"[FAILED] Failed to save dashboard summary for {city}")
+            logger.error("[FAILED] Failed to save dashboard summary for %s", city)
             raise self.retry(exc=Exception("Failed to save dashboard summary"))
             
     except Exception as exc:
-        logger.error(f"[ERROR] Error in dashboard population task: {exc}")
+        logger.error("[ERROR] Error in dashboard population task: %s", exc)
         raise self.retry(exc=exc, countdown=120)  # Retry after 2 minutes
 
 
@@ -98,7 +98,7 @@ def generate_dashboard_on_demand(city: str) -> dict:
     Returns:
         Task result
     """
-    logger.info(f"On-demand dashboard generation triggered for {city}")
+    logger.info("On-demand dashboard generation triggered for %s", city)
     
     try:
         loop = asyncio.get_event_loop()
@@ -122,5 +122,5 @@ def generate_dashboard_on_demand(city: str) -> dict:
         return {"status": "failed", "city": city}
         
     except Exception as e:
-        logger.error(f"Error in on-demand dashboard generation: {e}")
+        logger.error("Error in on-demand dashboard generation: %s", e)
         return {"status": "error", "city": city, "error": str(e)}

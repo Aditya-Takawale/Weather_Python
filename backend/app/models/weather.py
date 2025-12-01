@@ -5,7 +5,6 @@ Database models for storing raw weather data
 
 from datetime import datetime
 from typing import Optional, Dict, Any
-from enum import Enum
 from pydantic import BaseModel, Field
 
 

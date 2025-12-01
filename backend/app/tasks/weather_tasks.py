@@ -18,6 +18,10 @@ class DatabaseTask(Task):
     
     _db_connected = False
     
+    def run(self, *args, **kwargs):
+        """Placeholder run method - actual work done in concrete tasks"""
+        pass
+    
     def before_start(self, task_id, args, kwargs):
         """Connect to database before task starts"""
         if not self._db_connected:
@@ -45,7 +49,7 @@ def fetch_weather_data(self, city: str) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info(f"[WEATHER] Starting weather data fetch task for {city}")
+    logger.info("[WEATHER] Starting weather data fetch task for %s", city)
     
     try:
         # Run async service method
@@ -53,19 +57,19 @@ def fetch_weather_data(self, city: str) -> dict:
         success = loop.run_until_complete(WeatherService.fetch_and_store_weather(city))
         
         if success:
-            logger.info(f"[SUCCESS] Weather data fetch successful for {city}")
+            logger.info("[SUCCESS] Weather data fetch successful for %s", city)
             return {
                 "status": "success",
                 "city": city,
                 "message": "Weather data fetched and stored successfully"
             }
         else:
-            logger.error(f"[FAILED] Weather data fetch failed for {city}")
+            logger.error("[FAILED] Weather data fetch failed for %s", city)
             # Retry the task
             raise self.retry(exc=Exception("Failed to fetch weather data"))
             
     except Exception as exc:
-        logger.error(f"[ERROR] Error in weather fetch task: {exc}")
+        logger.error("[ERROR] Error in weather fetch task: %s", exc)
         # Retry with exponential backoff
         raise self.retry(exc=exc, countdown=2 ** self.request.retries * 60)
 
@@ -84,7 +88,7 @@ def fetch_weather_data_on_demand(city: str) -> dict:
     Returns:
         Task result
     """
-    logger.info(f"On-demand weather fetch triggered for {city}")
+    logger.info("On-demand weather fetch triggered for %s", city)
     
     try:
         loop = asyncio.get_event_loop()
@@ -96,5 +100,5 @@ def fetch_weather_data_on_demand(city: str) -> dict:
             return {"status": "failed", "city": city, "error": "API fetch failed"}
             
     except Exception as e:
-        logger.error(f"Error in on-demand fetch: {e}")
+        logger.error("Error in on-demand fetch: %s", e)
         return {"status": "error", "city": city, "error": str(e)}

@@ -3,7 +3,6 @@ Alert Service
 Business logic for weather alert detection and notification
 """
 
-from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
 
 from ..config.settings import settings
@@ -36,13 +35,13 @@ class AlertService:
             List of created alert IDs
         """
         try:
-            logger.info(f"Checking weather alerts for {city}")
+            logger.info("Checking weather alerts for %s", city)
             
             # Get latest weather data
             latest_weather = await WeatherRepository.get_latest_weather(city)
             
             if not latest_weather:
-                logger.warning(f"No weather data available for alert checking: {city}")
+                logger.warning("No weather data available for alert checking: %s", city)
                 return []
             
             created_alert_ids = []
@@ -68,14 +67,14 @@ class AlertService:
                 created_alert_ids.append(alert_id)
             
             if created_alert_ids:
-                logger.info(f"Created {len(created_alert_ids)} alerts for {city}")
+                logger.info("Created %s alerts for %s", len(created_alert_ids), city)
             else:
-                logger.debug(f"No alerts triggered for {city}")
+                logger.debug("No alerts triggered for %s", city)
             
             return created_alert_ids
             
         except Exception as e:
-            logger.error(f"Error checking alerts: {e}")
+            logger.error("Error checking alerts: %s", e)
             return []
     
     @staticmethod
@@ -94,7 +93,7 @@ class AlertService:
                 )
                 
                 if recent_alert:
-                    logger.debug(f"High temperature alert in cooldown period for {city}")
+                    logger.debug("High temperature alert in cooldown period for %s", city)
                     return None
                 
                 # Create alert
@@ -118,7 +117,7 @@ class AlertService:
                 )
                 
                 alert_id = await AlertRepository.insert_alert(alert)
-                logger.warning(f"HIGH TEMPERATURE ALERT: {city} - {temp_current}°C")
+                logger.warning("HIGH TEMPERATURE ALERT: %s - %s°C", city, temp_current)
                 
                 # Send notification (console for now)
                 await AlertService._send_notification(alert)
@@ -126,7 +125,7 @@ class AlertService:
                 return alert_id
                 
         except Exception as e:
-            logger.error(f"Error checking high temperature: {e}")
+            logger.error("Error checking high temperature: %s", e)
         
         return None
     
@@ -169,14 +168,14 @@ class AlertService:
                 )
                 
                 alert_id = await AlertRepository.insert_alert(alert)
-                logger.warning(f"LOW TEMPERATURE ALERT: {city} - {temp_current}°C")
+                logger.warning("LOW TEMPERATURE ALERT: %s - %s°C", city, temp_current)
                 
                 await AlertService._send_notification(alert)
                 
                 return alert_id
                 
         except Exception as e:
-            logger.error(f"Error checking low temperature: {e}")
+            logger.error("Error checking low temperature: %s", e)
         
         return None
     
@@ -219,14 +218,14 @@ class AlertService:
                 )
                 
                 alert_id = await AlertRepository.insert_alert(alert)
-                logger.warning(f"HIGH HUMIDITY ALERT: {city} - {humidity}%")
+                logger.warning("HIGH HUMIDITY ALERT: %s - %s%%", city, humidity)
                 
                 await AlertService._send_notification(alert)
                 
                 return alert_id
                 
         except Exception as e:
-            logger.error(f"Error checking high humidity: {e}")
+            logger.error("Error checking high humidity: %s", e)
         
         return None
     
@@ -236,7 +235,7 @@ class AlertService:
         try:
             weather_main = weather_data.get("weather", {}).get("main", "")
             
-            if weather_main in settings.ALERT_EXTREME_WEATHER:
+            if weather_main in settings.ALERT_EXTREME_WEATHER:  # type: ignore
                 # Check cooldown period
                 recent_alert = await AlertRepository.check_recent_similar_alert(
                     city,
@@ -269,14 +268,14 @@ class AlertService:
                 )
                 
                 alert_id = await AlertRepository.insert_alert(alert)
-                logger.critical(f"EXTREME WEATHER ALERT: {city} - {weather_main}")
+                logger.critical("EXTREME WEATHER ALERT: %s - %s", city, weather_main)
                 
                 await AlertService._send_notification(alert)
                 
                 return alert_id
                 
         except Exception as e:
-            logger.error(f"Error checking extreme weather: {e}")
+            logger.error("Error checking extreme weather: %s", e)
         
         return None
     
@@ -292,7 +291,7 @@ class AlertService:
         try:
             notification_message = (
                 f"\n{'='*60}\n"
-                f"🚨 WEATHER ALERT 🚨\n"
+                f"[ALERT] WEATHER ALERT\n"
                 f"{'='*60}\n"
                 f"City: {alert.city}\n"
                 f"Type: {alert.alert_type.value}\n"
@@ -304,14 +303,11 @@ class AlertService:
             
             logger.warning(notification_message)
             
-            # TODO: Implement additional notification channels
-            # - Email via SMTP
-            # - SMS via Twilio
-            # - Slack/Discord webhook
-            # - Push notifications
+            # NOTE: Additional notification channels can be implemented:
+            # - Email via SMTP, SMS via Twilio, Slack/Discord webhook, Push notifications
             
         except Exception as e:
-            logger.error(f"Error sending notification: {e}")
+            logger.error("Error sending notification: %s", e)
     
     @staticmethod
     async def get_active_alerts(city: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
@@ -328,7 +324,7 @@ class AlertService:
         try:
             return await AlertRepository.get_active_alerts(city, limit)
         except Exception as e:
-            logger.error(f"Error getting active alerts: {e}")
+            logger.error("Error getting active alerts: %s", e)
             return []
     
     @staticmethod
@@ -346,7 +342,7 @@ class AlertService:
         try:
             return await AlertRepository.get_recent_alerts(city, hours)
         except Exception as e:
-            logger.error(f"Error getting recent alerts: {e}")
+            logger.error("Error getting recent alerts: %s", e)
             return []
     
     @staticmethod
@@ -363,7 +359,7 @@ class AlertService:
         try:
             return await AlertRepository.acknowledge_alert(alert_id)
         except Exception as e:
-            logger.error(f"Error acknowledging alert: {e}")
+            logger.error("Error acknowledging alert: %s", e)
             return False
     
     @staticmethod
@@ -380,5 +376,5 @@ class AlertService:
         try:
             return await AlertRepository.get_alert_stats(city)
         except Exception as e:
-            logger.error(f"Error getting alert stats: {e}")
+            logger.error("Error getting alert stats: %s", e)
             return {}

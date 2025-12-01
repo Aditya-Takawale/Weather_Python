@@ -38,12 +38,12 @@ class DashboardService:
             DashboardSummary instance or None
         """
         try:
-            logger.info(f"Generating dashboard summary for {city}")
+            logger.info("Generating dashboard summary for %s", city)
             
             # Get latest weather data
             latest_weather = await WeatherRepository.get_latest_weather(city)
             if not latest_weather:
-                logger.warning(f"No weather data found for {city}")
+                logger.warning("No weather data found for %s", city)
                 return None
             
             # Generate current weather snapshot
@@ -73,11 +73,11 @@ class DashboardService:
                 weather_distribution=weather_distribution
             )
             
-            logger.info(f"Successfully generated dashboard summary for {city}")
+            logger.info("Successfully generated dashboard summary for %s", city)
             return dashboard_summary
             
         except Exception as e:
-            logger.error(f"Error generating dashboard summary: {e}")
+            logger.error("Error generating dashboard summary: %s", e)
             return None
     
     @staticmethod
@@ -155,7 +155,7 @@ class DashboardService:
             )
             
         except Exception as e:
-            logger.error(f"Error generating today stats: {e}")
+            logger.error("Error generating today stats: %s", e)
             return TodayStats(
                 temp_avg=0, temp_min=0, temp_max=0,
                 humidity_avg=0, humidity_min=0, humidity_max=0,
@@ -222,7 +222,7 @@ class DashboardService:
             return hourly_trends
             
         except Exception as e:
-            logger.error(f"Error generating hourly trend: {e}")
+            logger.error("Error generating hourly trend: %s", e)
             return []
     
     @staticmethod
@@ -290,7 +290,7 @@ class DashboardService:
             return daily_trends
             
         except Exception as e:
-            logger.error(f"Error generating daily trend: {e}")
+            logger.error("Error generating daily trend: %s", e)
             return []
     
     @staticmethod
@@ -306,10 +306,10 @@ class DashboardService:
         """
         try:
             await DashboardRepository.upsert_summary(summary)
-            logger.info(f"Saved dashboard summary for {summary.city}")
+            logger.info("Saved dashboard summary for %s", summary.city)
             return True
         except Exception as e:
-            logger.error(f"Error saving dashboard summary: {e}")
+            logger.error("Error saving dashboard summary: %s", e)
             return False
     
     @staticmethod
@@ -326,5 +326,5 @@ class DashboardService:
         try:
             return await DashboardRepository.get_latest_summary(city)
         except Exception as e:
-            logger.error(f"Error getting latest dashboard summary: {e}")
+            logger.error("Error getting latest dashboard summary: %s", e)
             return None

@@ -47,17 +47,17 @@ class WeatherService:
                 response.raise_for_status()
                 
                 data = response.json()
-                logger.info(f"Successfully fetched weather data for {city}")
+                logger.info("Successfully fetched weather data for %s", city)
                 return data
                 
         except httpx.HTTPStatusError as e:
-            logger.error(f"HTTP error fetching weather: {e.response.status_code} - {e.response.text}")
+            logger.error("HTTP error fetching weather: %s - %s", e.response.status_code, e.response.text)
             return None
         except httpx.RequestError as e:
-            logger.error(f"Request error fetching weather: {e}")
+            logger.error("Request error fetching weather: %s", e)
             return None
         except Exception as e:
-            logger.error(f"Unexpected error fetching weather: {e}")
+            logger.error("Unexpected error fetching weather: %s", e)
             return None
     
     @staticmethod
@@ -125,11 +125,11 @@ class WeatherService:
                 raw_data=api_data
             )
             
-            logger.debug(f"Transformed API response for {weather_raw.city}")
+            logger.debug("Transformed API response for %s", weather_raw.city)
             return weather_raw
             
         except Exception as e:
-            logger.error(f"Error transforming API response: {e}")
+            logger.error("Error transforming API response: %s", e)
             raise
     
     @staticmethod
@@ -148,7 +148,7 @@ class WeatherService:
             api_data = await WeatherService.fetch_weather_from_api(city)
             
             if not api_data:
-                logger.warning(f"No data received from API for {city}")
+                logger.warning("No data received from API for %s", city)
                 return False
             
             # Transform to model
@@ -157,11 +157,11 @@ class WeatherService:
             # Store in database
             await WeatherRepository.insert_weather_data(weather_raw)
             
-            logger.info(f"Successfully fetched and stored weather data for {city}")
+            logger.info("Successfully fetched and stored weather data for %s", city)
             return True
             
         except Exception as e:
-            logger.error(f"Error in fetch_and_store_weather: {e}")
+            logger.error("Error in fetch_and_store_weather: %s", e)
             return False
     
     @staticmethod
@@ -178,7 +178,7 @@ class WeatherService:
         try:
             return await WeatherRepository.get_latest_weather(city)
         except Exception as e:
-            logger.error(f"Error getting latest weather: {e}")
+            logger.error("Error getting latest weather: %s", e)
             return None
     
     @staticmethod
@@ -196,5 +196,5 @@ class WeatherService:
         try:
             return await WeatherRepository.get_weather_last_n_hours(city, hours)
         except Exception as e:
-            logger.error(f"Error getting weather history: {e}")
+            logger.error("Error getting weather history: %s", e)
             return []

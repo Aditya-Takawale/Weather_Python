@@ -39,14 +39,6 @@ const DailyTrendChart: React.FC<DailyTrendChartProps> = ({ data }) => {
     weather: item.weather_main,
   }));
 
-  const getBarColor = (temp: number) => {
-    if (temp >= 35) return '#EF4444';
-    if (temp >= 30) return '#F59E0B';
-    if (temp >= 25) return '#FBBF24';
-    if (temp >= 20) return '#10B981';
-    return '#3B82F6';
-  };
-
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -130,17 +122,17 @@ const DailyTrendChart: React.FC<DailyTrendChartProps> = ({ data }) => {
               iconType="circle"
             />
             <Bar dataKey="max" name="Max Temp" radius={[8, 8, 0, 0]} barSize={40}>
-              {formattedData.map((entry, index) => (
+              {formattedData.map((_entry, index) => (
                 <Cell key={`cell-max-${index}`} fill="#EF4444" />
               ))}
             </Bar>
             <Bar dataKey="avg" name="Avg Temp" radius={[8, 8, 0, 0]} barSize={40}>
-              {formattedData.map((entry, index) => (
+              {formattedData.map((_entry, index) => (
                 <Cell key={`cell-avg-${index}`} fill="#F59E0B" />
               ))}
             </Bar>
             <Bar dataKey="min" name="Min Temp" radius={[8, 8, 0, 0]} barSize={40}>
-              {formattedData.map((entry, index) => (
+              {formattedData.map((_entry, index) => (
                 <Cell key={`cell-min-${index}`} fill="#3B82F6" />
               ))}
             </Bar>

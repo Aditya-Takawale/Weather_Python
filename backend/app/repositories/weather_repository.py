@@ -6,7 +6,6 @@ Database operations for raw weather data
 from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Any
 from motor.motor_asyncio import AsyncIOMotorCollection
-from bson import ObjectId
 
 from ..config.database import DatabaseManager
 from ..config.settings import settings
@@ -20,7 +19,7 @@ class WeatherRepository:
     """Repository for rawweatherdatas collection operations"""
     
     @classmethod
-    def _get_collection(cls) -> AsyncIOMotorCollection:
+    def _get_collection(cls) -> AsyncIOMotorCollection:  # type: ignore
         """Get raw weather data collection"""
         return DatabaseManager.get_collection(settings.COLLECTION_RAW_WEATHER)
     
@@ -40,12 +39,12 @@ class WeatherRepository:
             document = weather_data.model_dump()
             
             result = await collection.insert_one(document)
-            logger.info(f"Inserted weather data for {weather_data.city} at {weather_data.timestamp}")
+            logger.info("Inserted weather data for %s at %s", weather_data.city, weather_data.timestamp)
             
             return str(result.inserted_id)
             
         except Exception as e:
-            logger.error(f"Error inserting weather data: {e}")
+            logger.error("Error inserting weather data: %s", e)
             raise
     
     @classmethod
@@ -73,7 +72,7 @@ class WeatherRepository:
             return document
             
         except Exception as e:
-            logger.error(f"Error fetching latest weather: {e}")
+            logger.error("Error fetching latest weather: %s", e)
             raise
     
     @classmethod
@@ -118,7 +117,7 @@ class WeatherRepository:
             return documents
             
         except Exception as e:
-            logger.error(f"Error fetching weather by time range: {e}")
+            logger.error("Error fetching weather by time range: %s", e)
             raise
     
     @classmethod
@@ -176,12 +175,12 @@ class WeatherRepository:
             )
             
             count = result.modified_count
-            logger.info(f"Soft deleted {count} weather records older than {days} days")
+            logger.info("Soft deleted %s weather records older than %s days", count, days)
             
             return count
             
         except Exception as e:
-            logger.error(f"Error soft deleting old records: {e}")
+            logger.error("Error soft deleting old records: %s", e)
             raise
     
     @classmethod
@@ -205,12 +204,12 @@ class WeatherRepository:
             )
             
             count = result.deleted_count
-            logger.info(f"Hard deleted {count} weather records older than {days} days")
+            logger.info("Hard deleted %s weather records older than %s days", count, days)
             
             return count
             
         except Exception as e:
-            logger.error(f"Error hard deleting old records: {e}")
+            logger.error("Error hard deleting old records: %s", e)
             raise
     
     @classmethod
@@ -264,7 +263,7 @@ class WeatherRepository:
             return {}
             
         except Exception as e:
-            logger.error(f"Error calculating weather stats: {e}")
+            logger.error("Error calculating weather stats: %s", e)
             raise
     
     @classmethod
@@ -311,5 +310,5 @@ class WeatherRepository:
             return distribution
             
         except Exception as e:
-            logger.error(f"Error calculating weather distribution: {e}")
+            logger.error("Error calculating weather distribution: %s", e)
             raise

@@ -46,7 +46,7 @@ def setup_logging(log_level: Optional[str] = None) -> None:
     logging.getLogger("celery").setLevel(logging.INFO)
     
     logger = logging.getLogger(__name__)
-    logger.info(f"Logging configured with level: {level}")
+    logger.info("Logging configured with level: %s", level)
 
 
 def get_logger(name: str) -> logging.Logger:

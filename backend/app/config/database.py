@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 class DatabaseManager:
     """Singleton MongoDB connection manager"""
     
-    _client: Optional[AsyncIOMotorClient] = None
-    _database: Optional[AsyncIOMotorDatabase] = None
+    _client: Optional[AsyncIOMotorClient] = None  # type: ignore
+    _database: Optional[AsyncIOMotorDatabase] = None  # type: ignore
     
     @classmethod
     async def connect(cls) -> None:
@@ -30,7 +30,7 @@ class DatabaseManager:
             return
         
         try:
-            logger.info(f"Connecting to MongoDB: {settings.MONGODB_URL}")
+            logger.info("Connecting to MongoDB: %s", settings.MONGODB_URL)
             
             cls._client = AsyncIOMotorClient(
                 settings.MONGODB_URL,
@@ -42,18 +42,18 @@ class DatabaseManager:
             # Test connection
             await cls._client.admin.command('ping')
             
-            cls._database = cls._client[settings.MONGODB_DB_NAME]
+            cls._database = cls._client[settings.MONGODB_DB_NAME]  # type: ignore
             
             # Create indexes
             await cls._create_indexes()
             
-            logger.info(f"Successfully connected to MongoDB database: {settings.MONGODB_DB_NAME}")
+            logger.info("Successfully connected to MongoDB database: %s", settings.MONGODB_DB_NAME)
             
         except ConnectionFailure as e:
-            logger.error(f"Failed to connect to MongoDB: {e}")
+            logger.error("Failed to connect to MongoDB: %s", e)
             raise
         except Exception as e:
-            logger.error(f"Unexpected error connecting to MongoDB: {e}")
+            logger.error("Unexpected error connecting to MongoDB: %s", e)
             raise
     
     @classmethod
@@ -64,7 +64,7 @@ class DatabaseManager:
         
         try:
             # Raw Weather Data Collection Indexes
-            raw_weather = cls._database[settings.COLLECTION_RAW_WEATHER]
+            raw_weather = cls._database[settings.COLLECTION_RAW_WEATHER]  # type: ignore
             await raw_weather.create_index([("timestamp", -1)])
             await raw_weather.create_index([("city", 1), ("timestamp", -1)])
             await raw_weather.create_index([("is_deleted", 1)])
@@ -74,7 +74,7 @@ class DatabaseManager:
             )
             
             # Dashboard Summary Collection Indexes
-            dashboard_summary = cls._database[settings.COLLECTION_DASHBOARD_SUMMARY]
+            dashboard_summary = cls._database[settings.COLLECTION_DASHBOARD_SUMMARY]  # type: ignore
             try:
                 await dashboard_summary.create_index([
                     ("city", 1),
@@ -87,29 +87,29 @@ class DatabaseManager:
                     # Clean up null generated_at records
                     await dashboard_summary.delete_many({"generated_at": None})
                 else:
-                    logger.debug(f"Dashboard summary index: {idx_error}")
+                    logger.debug("Dashboard summary index: %s", idx_error)
             
             # Alert Logs Collection Indexes
-            alert_logs = cls._database[settings.COLLECTION_ALERT_LOGS]
+            alert_logs = cls._database[settings.COLLECTION_ALERT_LOGS]  # type: ignore
             try:
                 await alert_logs.create_index([("city", 1), ("triggered_at", -1)])
                 await alert_logs.create_index([("is_active", 1)])
                 await alert_logs.create_index([("alert_type", 1)])
                 await alert_logs.create_index([("triggered_at", -1)])
             except Exception as idx_error:
-                logger.debug(f"Alert logs index: {idx_error}")
+                logger.debug("Alert logs index: %s", idx_error)
             
             # Alert Configs Collection Indexes (if needed)
-            alert_configs = cls._database[settings.COLLECTION_ALERT_CONFIGS]
+            alert_configs = cls._database[settings.COLLECTION_ALERT_CONFIGS]  # type: ignore
             try:
                 await alert_configs.create_index([("city", 1), ("alert_type", 1)], unique=True)
             except Exception as idx_error:
-                logger.debug(f"Alert configs index: {idx_error}")
+                logger.debug("Alert configs index: %s", idx_error)
             
             logger.info("Database indexes verified successfully")
             
         except Exception as e:
-            logger.error(f"Error setting up database indexes: {e}")
+            logger.error("Error setting up database indexes: %s", e)
             # Don't raise - indexes are optimization, not critical
     
     @classmethod
@@ -122,7 +122,7 @@ class DatabaseManager:
             logger.info("MongoDB connection closed")
     
     @classmethod
-    def get_database(cls) -> AsyncIOMotorDatabase:
+    def get_database(cls) -> AsyncIOMotorDatabase:  # type: ignore
         """
         Get database instance
         
@@ -148,11 +148,11 @@ class DatabaseManager:
             Collection instance
         """
         db = cls.get_database()
-        return db[collection_name]
+        return db[collection_name]  # type: ignore
 
 
 # Convenience functions for FastAPI dependency injection
-async def get_database() -> AsyncIOMotorDatabase:
+async def get_database() -> AsyncIOMotorDatabase:  # type: ignore
     """FastAPI dependency for getting database instance"""
     return DatabaseManager.get_database()
 

@@ -14,7 +14,6 @@ import {
   Chip,
 } from '@mui/material';
 import {
-  Thermostat,
   Water,
   Air,
   Visibility,
@@ -111,7 +110,6 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({ weather, city }
         </Box>
         <Divider sx={{ my: 1.5, backgroundColor: 'rgba(255,255,255,0.2)' }} />
 
-        <Grid container spacing={1.5}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
