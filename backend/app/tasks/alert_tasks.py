@@ -152,7 +152,7 @@ def send_alert_digest(city: str, hours: int = 24) -> dict:
                 "by_type": stats.get("by_type", {})
             }
             
-            logger.info(f"Alert digest summary: {digest_summary}")
+            logger.info("Alert digest summary: %s", digest_summary)
             
             return {
                 "status": "success",
@@ -160,7 +160,7 @@ def send_alert_digest(city: str, hours: int = 24) -> dict:
                 "digest": digest_summary
             }
         else:
-            logger.info(f"No alerts to report for {city}")
+            logger.info("No alerts to report for %s", city)
             return {
                 "status": "no_alerts",
                 "city": city,
@@ -168,5 +168,5 @@ def send_alert_digest(city: str, hours: int = 24) -> dict:
             }
             
     except Exception as e:
-        logger.error(f"Error generating alert digest: {e}")
+        logger.error("Error generating alert digest: %s", e)
         return {"status": "error", "city": city, "error": str(e)}
