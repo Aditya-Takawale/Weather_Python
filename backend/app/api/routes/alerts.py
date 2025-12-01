@@ -3,9 +3,10 @@ Alerts API Routes
 Endpoints for weather alert management
 """
 
-from fastapi import APIRouter, HTTPException, Query, status
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
+
+from fastapi import APIRouter, HTTPException, Query, status
 
 from ...models.alert import (
     AlertResponse,
@@ -33,19 +34,19 @@ async def get_active_alerts(
 ):
     """
     Get active (unacknowledged) weather alerts.
-    
+
     Args:
         city: Filter by city (optional)
         limit: Maximum number of alerts
-        
+
     Returns:
         List of active alerts
     """
     try:
         logger.info(f"Active alerts requested (city: {city or 'all'})")
-        
+
         alerts_data = await AlertService.get_active_alerts(city, limit)
-        
+
         # Transform to response models
         alerts = [
             AlertResponse(
@@ -61,16 +62,16 @@ async def get_active_alerts(
             )
             for alert in alerts_data
         ]
-        
+
         logger.info(f"Returning {len(alerts)} active alerts")
         return alerts
-        
+
     except Exception as e:
         logger.error(f"Error fetching active alerts: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve active alerts"
-        )
+        ) from e
 
 
 @router.get(
@@ -85,19 +86,19 @@ async def get_recent_alerts(
 ):
     """
     Get recent alerts for a city.
-    
+
     Args:
         city: City name
         hours: Number of hours to look back
-        
+
     Returns:
         List of recent alerts
     """
     try:
         logger.info(f"Recent alerts requested for {city} (last {hours} hours)")
-        
+
         alerts_data = await AlertService.get_recent_alerts(city, hours)
-        
+
         # Transform to response models
         alerts = [
             AlertResponse(
@@ -113,15 +114,15 @@ async def get_recent_alerts(
             )
             for alert in alerts_data
         ]
-        
+
         return alerts
-        
+
     except Exception as e:
         logger.error(f"Error fetching recent alerts: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve recent alerts"
-        )
+        ) from e
 
 
 @router.post(
@@ -132,18 +133,18 @@ async def get_recent_alerts(
 async def acknowledge_alert(request: AlertAcknowledgeRequest):
     """
     Acknowledge a weather alert.
-    
+
     Args:
         request: Alert acknowledgment request
-        
+
     Returns:
         Acknowledgment status
     """
     try:
         logger.info(f"Acknowledging alert: {request.alert_id}")
-        
+
         success = await AlertService.acknowledge_alert(request.alert_id)
-        
+
         if success:
             return {
                 "success": True,
@@ -156,7 +157,7 @@ async def acknowledge_alert(request: AlertAcknowledgeRequest):
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Alert not found or already acknowledged"
             )
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -164,7 +165,7 @@ async def acknowledge_alert(request: AlertAcknowledgeRequest):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to acknowledge alert"
-        )
+        ) from e
 
 
 @router.get(
@@ -176,18 +177,18 @@ async def acknowledge_alert(request: AlertAcknowledgeRequest):
 async def get_alert_statistics(city: Optional[str] = None):
     """
     Get alert statistics.
-    
+
     Args:
         city: Filter by city (optional)
-        
+
     Returns:
         Alert statistics
     """
     try:
         logger.info(f"Alert statistics requested (city: {city or 'all'})")
-        
+
         stats = await AlertService.get_alert_stats(city)
-        
+
         response = AlertStatsResponse(
             total_alerts=stats.get("total_alerts", 0),
             active_alerts=stats.get("active_alerts", 0),
@@ -195,15 +196,15 @@ async def get_alert_statistics(city: Optional[str] = None):
             by_type=stats.get("by_type", {}),
             recent_alerts=stats.get("recent_alerts", 0)
         )
-        
+
         return response
-        
+
     except Exception as e:
         logger.error(f"Error fetching alert statistics: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve alert statistics"
-        )
+        ) from e
 
 
 @router.post(
@@ -214,18 +215,18 @@ async def get_alert_statistics(city: Optional[str] = None):
 async def trigger_alert_check(city: Optional[str] = "Pune"):
     """
     Manually trigger alert checking for a city.
-    
+
     Args:
         city: City name
-        
+
     Returns:
         Alert check result
     """
     try:
         logger.info(f"Manual alert check triggered for {city}")
-        
+
         alert_ids = await AlertService.check_and_create_alerts(city)
-        
+
         return {
             "success": True,
             "message": f"Alert check completed for {city}",
@@ -233,10 +234,10 @@ async def trigger_alert_check(city: Optional[str] = "Pune"):
             "alert_ids": alert_ids,
             "timestamp": datetime.utcnow()
         }
-        
+
     except Exception as e:
         logger.error(f"Error triggering alert check: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to trigger alert check"
-        )
+        ) from e
