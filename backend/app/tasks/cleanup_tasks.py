@@ -42,7 +42,7 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
             WeatherRepository.soft_delete_old_records(days=retention_days)
         )
         
-        logger.info(f"[SUCCESS] Data cleanup completed: {deleted_count} records marked as deleted")
+        logger.info("[SUCCESS] Data cleanup completed: %s records marked as deleted", deleted_count)
         
         return {
             "status": "success",
@@ -52,7 +52,7 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
         }
         
     except Exception as exc:
-        logger.error(f"[ERROR] Error in data cleanup task: {exc}")
+        logger.error("[ERROR] Error in data cleanup task: %s", exc)
         return {
             "status": "error",
             "message": str(exc)
@@ -74,7 +74,7 @@ def hard_delete_old_data(days: int = 7) -> dict:
     Returns:
         Task result
     """
-    logger.info(f"[DELETE] Starting hard delete task (older than {days} days)")
+    logger.info("[DELETE] Starting hard delete task (older than %s days)", days)
     
     try:
         loop = asyncio.get_event_loop()
@@ -83,7 +83,7 @@ def hard_delete_old_data(days: int = 7) -> dict:
             WeatherRepository.hard_delete_old_records(days=days)
         )
         
-        logger.info(f"[SUCCESS] Hard delete completed: {deleted_count} records permanently removed")
+        logger.info("[SUCCESS] Hard delete completed: %s records permanently removed", deleted_count)
         
         return {
             "status": "success",
@@ -92,7 +92,7 @@ def hard_delete_old_data(days: int = 7) -> dict:
         }
         
     except Exception as e:
-        logger.error(f"Error in hard delete task: {e}")
+        logger.error("Error in hard delete task: %s", e)
         return {"status": "error", "error": str(e)}
 
 
@@ -110,7 +110,7 @@ def cleanup_old_alerts(days: int = 30) -> dict:
     Returns:
         Task result
     """
-    logger.info(f"[CLEANUP] Starting alert cleanup task (older than {days} days)")
+    logger.info("[CLEANUP] Starting alert cleanup task (older than %s days)", days)
     
     try:
         loop = asyncio.get_event_loop()
@@ -119,7 +119,7 @@ def cleanup_old_alerts(days: int = 30) -> dict:
             AlertRepository.delete_old_alerts(days=days)
         )
         
-        logger.info(f"[SUCCESS] Alert cleanup completed: {deleted_count} alerts removed")
+        logger.info("[SUCCESS] Alert cleanup completed: %s alerts removed", deleted_count)
         
         return {
             "status": "success",
@@ -128,7 +128,7 @@ def cleanup_old_alerts(days: int = 30) -> dict:
         }
         
     except Exception as e:
-        logger.error(f"Error in alert cleanup task: {e}")
+        logger.error("Error in alert cleanup task: %s", e)
         return {"status": "error", "error": str(e)}
 
 
@@ -156,5 +156,5 @@ def optimize_database() -> dict:
         }
         
     except Exception as e:
-        logger.error(f"Error in database optimization: {e}")
+        logger.error("Error in database optimization: %s", e)
         return {"status": "error", "error": str(e)}

@@ -20,7 +20,6 @@ class DatabaseTask(Task):
     
     def run(self, *args, **kwargs):
         """Placeholder run method - actual work done in concrete tasks"""
-        pass
     
     def before_start(self, task_id, args, kwargs):
         """Connect to database before task starts"""
