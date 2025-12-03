@@ -46,7 +46,11 @@ const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, loading }) => {
       }}
     >
       <Toolbar sx={{ minHeight: '56px !important', py: 1 }}>
-        <SunnyIcon sx={{ mr: 1.5, fontSize: 28 }} />
+        {isDarkMode ? (
+          <DarkModeIcon sx={{ mr: 1.5, fontSize: 28 }} />
+        ) : (
+          <SunnyIcon sx={{ mr: 1.5, fontSize: 28 }} />
+        )}
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700 }}>
           Weather Monitoring System
         </Typography>
@@ -105,10 +109,10 @@ const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, loading }) => {
                 },
               }}
             >
-              <LightModeIcon
+              <DarkModeIcon
                 sx={{
                   fontSize: 20,
-                  color: isDarkMode ? 'rgba(255,255,255,0.5)' : '#FFD700',
+                  color: isDarkMode ? 'rgba(255,255,255,0.5)' : '#9D9FFF',
                   transition: 'all 0.3s ease',
                 }}
               />
@@ -136,10 +140,10 @@ const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, loading }) => {
                   }}
                 />
               </Box>
-              <DarkModeIcon
+              <LightModeIcon
                 sx={{
                   fontSize: 20,
-                  color: isDarkMode ? '#9D9FFF' : 'rgba(255,255,255,0.5)',
+                  color: isDarkMode ? '#FFD700' : 'rgba(255,255,255,0.5)',
                   transition: 'all 0.3s ease',
                 }}
               />
