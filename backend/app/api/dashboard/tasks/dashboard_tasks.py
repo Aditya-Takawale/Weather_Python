@@ -33,7 +33,11 @@ def populate_dashboard_summary(self, city: str) -> dict:
     logger.info("[DASHBOARD] Starting dashboard summary population task for %s", city)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         service = DashboardService()
         
         summary = loop.run_until_complete(
@@ -92,7 +96,14 @@ def generate_dashboard_on_demand(city: str) -> dict:
     logger.info("On-demand dashboard generation triggered for %s", city)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         service = DashboardService()
         
         summary = loop.run_until_complete(

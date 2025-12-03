@@ -32,7 +32,11 @@ def check_weather_alerts(self, city: str) -> dict:
     logger.info("[ALERT] Starting weather alert check task for %s", city)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         service = AlertService()
         
         alert_ids = loop.run_until_complete(
@@ -79,7 +83,11 @@ def check_alerts_on_demand(city: str) -> dict:
     logger.info("On-demand alert check triggered for %s", city)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         service = AlertService()
         
         alert_ids = loop.run_until_complete(
@@ -117,7 +125,11 @@ def send_alert_digest(city: str, hours: int = 24) -> dict:
     logger.info("[DIGEST] Generating alert digest for %s (last %s hours)", city, hours)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         service = AlertService()
         
         # Get recent alerts

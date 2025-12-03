@@ -29,10 +29,18 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info("[CLEANUP] Starting data cleanup task (retention: %s days)", retention_days)
+    logger.info("[HARD DELETE] Starting hard delete task (retention: %s days)", retention_days)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        repository = WeatherRepository()p()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         repository = WeatherRepository()
         
         deleted_count = loop.run_until_complete(
@@ -74,7 +82,11 @@ def hard_delete_old_data(days: int = 7) -> dict:
     logger.info("[DELETE] Starting hard delete task (older than %s days)", days)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         repository = WeatherRepository()
         
         deleted_count = loop.run_until_complete(
@@ -111,7 +123,11 @@ def cleanup_old_alerts(days: int = 30) -> dict:
     logger.info("[CLEANUP] Starting alert cleanup task (older than %s days)", days)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         repository = AlertRepository()
         
         deleted_count = loop.run_until_complete(

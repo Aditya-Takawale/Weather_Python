@@ -24,7 +24,11 @@ class DatabaseTask(Task):
     def before_start(self, task_id, args, kwargs):
         """Initialize database connection"""
         if not self._db_connected:
-            loop = asyncio.get_event_loop()
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
             loop.run_until_complete(DatabaseManager.connect())
             self._db_connected = True
 
@@ -51,7 +55,11 @@ def fetch_weather_data(self, city: str) -> dict:
     
     try:
         # Run async service method with OOP instance
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         service = WeatherService()
         success = loop.run_until_complete(service.fetch_and_store_weather(city))
         
@@ -88,7 +96,11 @@ def fetch_weather_data_on_demand(city: str) -> dict:
     logger.info("On-demand weather fetch triggered for %s", city)
     
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         service = WeatherService()
         success = loop.run_until_complete(service.fetch_and_store_weather(city))
         
