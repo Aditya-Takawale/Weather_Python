@@ -29,15 +29,11 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
     Returns:
         Task result dictionary
     """
-    logger.info("[HARD DELETE] Starting hard delete task (retention: %s days)", retention_days)
+    logger.info("[CLEANUP] Starting data cleanup task (retention: %s days)", retention_days)
     
     try:
         try:
             loop = asyncio.get_event_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-        repository = WeatherRepository()p()
         except RuntimeError:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
