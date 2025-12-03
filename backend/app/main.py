@@ -10,8 +10,8 @@ from fastapi.exceptions import RequestValidationError
 from contextlib import asynccontextmanager
 import time
 
-from .config.settings import settings
-from .config.database import DatabaseManager
+from .infrastructure.config import settings
+from .infrastructure.database import DatabaseManager
 from .core.logging import setup_logging, get_logger
 from .api.routes import dashboard_router, weather_router, alerts_router
 

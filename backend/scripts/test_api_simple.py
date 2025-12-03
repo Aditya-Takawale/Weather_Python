@@ -8,7 +8,7 @@ import json
 
 # Your configuration
 # Get API key from environment or settings
-from app.config.settings import settings
+from app.infrastructure.config import settings
 API_KEY = settings.OPENWEATHER_API_KEY
 CITY = "Pune"
 COUNTRY = "IN"

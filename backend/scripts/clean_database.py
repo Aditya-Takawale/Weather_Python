@@ -10,7 +10,7 @@ backend_dir = Path(__file__).parent
 sys.path.insert(0, str(backend_dir))
 
 import logging
-from app.config.database import DatabaseManager
+from app.infrastructure.database import DatabaseManager
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

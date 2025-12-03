@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional
 from datetime import datetime
 
-from ...config.settings import settings
+from ...infrastructure.config import settings
 
 
 def setup_logging(log_level: Optional[str] = None) -> None:

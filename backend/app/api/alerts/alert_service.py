@@ -9,7 +9,7 @@ from datetime import datetime
 from ...common.base_service import BaseService
 from ...common.exceptions import NotFoundException, InternalServerException
 from ...common.decorators import log_execution, handle_exceptions
-from ...config.settings import settings
+from ...infrastructure.config import settings
 from ...models.alert import (
     AlertLog,
     AlertType,

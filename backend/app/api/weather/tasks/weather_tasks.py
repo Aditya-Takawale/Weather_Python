@@ -6,7 +6,7 @@ Celery tasks for fetching weather data from OpenWeatherMap API
 import asyncio
 from celery import Task
 from ....core.celery.celery_app import celery_app
-from ....config.database import DatabaseManager
+from ....infrastructure.database import DatabaseManager
 from ..weather_service import WeatherService
 from ....core.logging.logger import get_logger
 

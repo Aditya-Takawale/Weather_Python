@@ -6,7 +6,7 @@ Quick script to verify system connectivity
 import asyncio
 import httpx
 from motor.motor_asyncio import AsyncIOMotorClient
-from app.config.settings import settings
+from app.infrastructure.config import settings
 
 async def test_mongodb():
     """Test MongoDB connection"""

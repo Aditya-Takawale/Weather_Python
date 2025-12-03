@@ -8,7 +8,7 @@ from datetime import datetime
 
 from ...common.base_repository import BaseRepository
 from ...models.dashboard import DashboardSummary
-from ...config.settings import settings
+from ...infrastructure.config import settings
 
 
 class DashboardRepository(BaseRepository[DashboardSummary]):

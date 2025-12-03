@@ -11,7 +11,7 @@ sys.path.insert(0, str(backend_dir))
 
 import logging
 from datetime import datetime, timedelta
-from app.config.database import DatabaseManager
+from app.infrastructure.database import DatabaseManager
 from app.api.weather.weather_repository import WeatherRepository
 from app.models.weather import WeatherRaw, WeatherTemperature, WeatherCondition, WeatherWind
 

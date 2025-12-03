@@ -9,7 +9,7 @@ from bson import ObjectId
 
 from ...common.base_repository import BaseRepository
 from ...models.weather import WeatherRaw
-from ...config.settings import settings
+from ...infrastructure.config import settings
 
 
 class WeatherRepository(BaseRepository[WeatherRaw]):

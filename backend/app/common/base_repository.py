@@ -8,7 +8,7 @@ from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorCollection
 from bson import ObjectId
 
-from ..config.database import DatabaseManager
+from ..infrastructure.database import DatabaseManager
 from ..core.logging import get_logger
 
 T = TypeVar('T')

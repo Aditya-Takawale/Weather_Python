@@ -8,7 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from pymongo.errors import ConnectionFailure
 import logging
 
-from .settings import settings
+from ..config.settings import settings
 
 logger = logging.getLogger(__name__)
 

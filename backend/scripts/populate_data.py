@@ -10,8 +10,8 @@ backend_dir = Path(__file__).parent
 sys.path.insert(0, str(backend_dir))
 
 import logging
-from app.config.settings import settings
-from app.config.database import DatabaseManager
+from app.infrastructure.config import settings
+from app.infrastructure.database import DatabaseManager
 from app.api.weather.weather_service import WeatherService
 from app.api.dashboard.dashboard_service import DashboardService
 

@@ -4,11 +4,11 @@ Test script to verify system functionality
 
 import asyncio
 import httpx
-from app.config.settings import settings
+from app.infrastructure.config import settings
 from app.api.weather.weather_service import WeatherService
 from app.api.dashboard.dashboard_service import DashboardService
 from app.api.alerts.alert_service import AlertService
-from app.config.database import DatabaseManager
+from app.infrastructure.database import DatabaseManager
 from app.core.logging import get_logger
 
 logger = get_logger(__name__)

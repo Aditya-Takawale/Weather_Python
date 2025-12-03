@@ -9,7 +9,7 @@ from bson import ObjectId
 
 from ...common.base_repository import BaseRepository
 from ...models.alert import AlertLog, AlertType
-from ...config.settings import settings
+from ...infrastructure.config import settings
 
 
 class AlertRepository(BaseRepository[AlertLog]):

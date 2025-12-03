@@ -14,7 +14,7 @@ from ...common.exceptions import (
     InternalServerException
 )
 from ...common.decorators import log_execution, handle_exceptions
-from ...config.settings import settings
+from ...infrastructure.config import settings
 from ...models.weather import (
     WeatherRaw,
     WeatherTemperature,
