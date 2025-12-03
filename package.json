@@ -8,8 +8,8 @@
     "start:full": "concurrently \"npm run backend\" \"npm run celery-worker\" \"npm run celery-beat\" \"npm run frontend\" --names \"API,WORKER,BEAT,UI\" --prefix-colors \"blue,yellow,magenta,green\" --kill-others-on-fail",
     "redis": "docker start redis-weather || docker run -d --name redis-weather -p 6379:6379 redis",
     "backend": "cd backend && .\\venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
-    "celery-worker": "cd backend && .\\venv\\Scripts\\python.exe -m celery -A app.tasks.celery_app worker --loglevel=info --pool=solo -Q celery,weather_queue,dashboard_queue,alert_queue,cleanup_queue",
-    "celery-beat": "cd backend && .\\venv\\Scripts\\python.exe -m celery -A app.tasks.celery_app beat --loglevel=info",
+    "celery-worker": "cd backend && .\\venv\\Scripts\\python.exe -m celery -A app.core.celery.celery_app worker --loglevel=info --pool=solo -Q celery,weather_queue,dashboard_queue,alert_queue,maintenance_queue",
+    "celery-beat": "cd backend && .\\venv\\Scripts\\python.exe -m celery -A app.core.celery.celery_app beat --loglevel=info",
     "frontend": "cd frontend && npm run dev",
     "stop": "echo Use Ctrl+C to stop all services"
   },
