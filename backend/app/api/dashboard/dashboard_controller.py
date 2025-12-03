@@ -38,7 +38,24 @@ class DashboardController(BaseController):
             self.logger.info("Dashboard summary requested for %s", city)
             
             # Get latest pre-computed summary from database
-            summary_data = await self.service.get_latest_dashboard_summary(city)
+            try:
+                summary_data = await self.service.get_latest_dashboard_summary(city)
+            except NotFoundException:
+                # No summary exists, generate one on-the-fly
+                self.logger.info("No dashboard summary found, generating on-demand for %s", city)
+                summary_data_obj = await self.service.generate_dashboard_summary(city)
+                
+                if not summary_data_obj:
+                    # No weather data available yet
+                    return self.error_response(
+                        message=f"No weather data available for {city} yet. Please wait for data collection.",
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        details={"city": city, "reason": "No weather data collected"}
+                    )
+                
+                # Save it for future requests
+                await self.service.save_dashboard_summary(summary_data_obj)
+                summary_data = summary_data_obj.model_dump()
             
             # Convert to Pydantic model
             summary = DashboardSummary(**summary_data)
