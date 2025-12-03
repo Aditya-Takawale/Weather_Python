@@ -12,7 +12,7 @@ sys.path.insert(0, str(backend_dir))
 import logging
 from datetime import datetime, timedelta
 from app.config.database import DatabaseManager
-from app.repositories.weather_repository import WeatherRepository
+from app.api.weather.weather_repository import WeatherRepository
 from app.models.weather import WeatherRaw, WeatherTemperature, WeatherCondition, WeatherWind
 
 logger = logging.getLogger(__name__)
@@ -90,7 +90,8 @@ async def populate_historical_data():
                     )
                     
                     # Insert into database
-                    await WeatherRepository.insert_weather_data(weather_data)
+                    repository = WeatherRepository()
+                    await repository.insert_weather_data(weather_data)
                 
                 logger.info(f"✓ Generated data for {target_date.strftime('%Y-%m-%d')}")
         

@@ -1,20 +1,19 @@
 """
 Dashboard Data Population Tasks
 Celery tasks for aggregating and populating dashboard summary data
-Updated to use OOP architecture
 """
 
 import asyncio
-from .celery_app import celery_app
-from .weather_tasks import DatabaseTask
-from ..api.dashboard.dashboard_service import DashboardService
-from ..utils.logger import get_logger
+from ....core.celery.celery_app import celery_app
+from ....api.weather.tasks.weather_tasks import DatabaseTask
+from ..dashboard_service import DashboardService
+from ....core.logging.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 @celery_app.task(
-    name="app.tasks.dashboard_tasks.populate_dashboard_summary",
+    name="api.dashboard.tasks.populate_dashboard_summary",
     base=DatabaseTask,
     bind=True,
     max_retries=2
@@ -76,7 +75,7 @@ def populate_dashboard_summary(self, city: str) -> dict:
 
 
 @celery_app.task(
-    name="app.tasks.dashboard_tasks.generate_dashboard_on_demand",
+    name="api.dashboard.tasks.generate_dashboard_on_demand",
     base=DatabaseTask
 )
 def generate_dashboard_on_demand(city: str) -> dict:

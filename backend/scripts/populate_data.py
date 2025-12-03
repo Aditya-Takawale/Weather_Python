@@ -12,8 +12,8 @@ sys.path.insert(0, str(backend_dir))
 import logging
 from app.config.settings import settings
 from app.config.database import DatabaseManager
-from app.services.weather_service import WeatherService
-from app.services.dashboard_service import DashboardService
+from app.api.weather.weather_service import WeatherService
+from app.api.dashboard.dashboard_service import DashboardService
 
 logger = logging.getLogger(__name__)
 

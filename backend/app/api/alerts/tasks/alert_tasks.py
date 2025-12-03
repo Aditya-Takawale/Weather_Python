@@ -1,20 +1,19 @@
 """
 Weather Alert Tasks
 Celery tasks for checking weather conditions and triggering alerts
-Updated to use OOP architecture
 """
 
 import asyncio
-from .celery_app import celery_app
-from .weather_tasks import DatabaseTask
-from ..api.alerts.alert_service import AlertService
-from ..utils.logger import get_logger
+from ....core.celery.celery_app import celery_app
+from ....api.weather.tasks.weather_tasks import DatabaseTask
+from ..alert_service import AlertService
+from ....core.logging.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 @celery_app.task(
-    name="app.tasks.alert_tasks.check_weather_alerts",
+    name="api.alerts.tasks.check_weather_alerts",
     base=DatabaseTask,
     bind=True,
     max_retries=2
@@ -63,7 +62,7 @@ def check_weather_alerts(self, city: str) -> dict:
 
 
 @celery_app.task(
-    name="app.tasks.alert_tasks.check_alerts_on_demand",
+    name="api.alerts.tasks.check_alerts_on_demand",
     base=DatabaseTask
 )
 def check_alerts_on_demand(city: str) -> dict:
@@ -100,7 +99,7 @@ def check_alerts_on_demand(city: str) -> dict:
 
 
 @celery_app.task(
-    name="app.tasks.alert_tasks.send_alert_digest",
+    name="api.alerts.tasks.send_alert_digest",
     base=DatabaseTask
 )
 def send_alert_digest(city: str, hours: int = 24) -> dict:
@@ -119,15 +118,16 @@ def send_alert_digest(city: str, hours: int = 24) -> dict:
     
     try:
         loop = asyncio.get_event_loop()
+        service = AlertService()
         
         # Get recent alerts
         recent_alerts = loop.run_until_complete(
-            AlertService.get_recent_alerts(city, hours)
+            service.get_recent_alerts(city, hours)
         )
         
         # Get alert statistics
         stats = loop.run_until_complete(
-            AlertService.get_alert_stats(city)
+            service.get_alert_stats(city)
         )
         
         if recent_alerts:

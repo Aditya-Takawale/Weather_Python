@@ -8,8 +8,9 @@ from typing import Optional
 from datetime import datetime
 
 from ...models.dashboard import DashboardSummaryResponse, DashboardSummary
-from ...services.dashboard_service import DashboardService
 from ...utils.logger import get_logger
+# Legacy file - Use ../dashboard/dashboard_router.py instead
+# Kept for backward compatibility only
 
 logger = get_logger(__name__)
 

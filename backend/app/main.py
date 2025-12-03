@@ -12,7 +12,7 @@ import time
 
 from .config.settings import settings
 from .config.database import DatabaseManager
-from .utils.logger import setup_logging, get_logger
+from .core.logging import setup_logging, get_logger
 from .api.routes import dashboard_router, weather_router, alerts_router
 
 # Setup logging

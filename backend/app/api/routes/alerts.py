@@ -14,8 +14,9 @@ from ...models.alert import (
     AlertStatsResponse,
     AlertCondition
 )
-from ...services.alert_service import AlertService
 from ...utils.logger import get_logger
+# Legacy file - Use ../alerts/alert_router.py instead
+# Kept for backward compatibility only
 
 logger = get_logger(__name__)
 

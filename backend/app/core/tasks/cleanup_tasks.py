@@ -1,20 +1,20 @@
 """
 Data Cleanup Tasks
-Celery tasks for cleaning up old weather data
+System-level Celery tasks for cleaning up old data across all features
 """
 
 import asyncio
-from .celery_app import celery_app
-from .weather_tasks import DatabaseTask
-from ..api.weather.weather_repository import WeatherRepository
-from ..api.alerts.alert_repository import AlertRepository
-from ..utils.logger import get_logger
+from ...celery.celery_app import celery_app
+from ....api.weather.tasks.weather_tasks import DatabaseTask
+from ....api.weather.weather_repository import WeatherRepository
+from ....api.alerts.alert_repository import AlertRepository
+from ...logging.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 @celery_app.task(
-    name="app.tasks.cleanup_tasks.cleanup_old_data",
+    name="core.tasks.cleanup_old_data",
     base=DatabaseTask,
     bind=True
 )
@@ -57,7 +57,7 @@ def cleanup_old_data(self, retention_days: int = 2) -> dict:
 
 
 @celery_app.task(
-    name="app.tasks.cleanup_tasks.hard_delete_old_data",
+    name="core.tasks.hard_delete_old_data",
     base=DatabaseTask
 )
 def hard_delete_old_data(days: int = 7) -> dict:
@@ -95,7 +95,7 @@ def hard_delete_old_data(days: int = 7) -> dict:
 
 
 @celery_app.task(
-    name="app.tasks.cleanup_tasks.cleanup_old_alerts",
+    name="core.tasks.cleanup_old_alerts",
     base=DatabaseTask
 )
 def cleanup_old_alerts(days: int = 30) -> dict:
@@ -132,7 +132,7 @@ def cleanup_old_alerts(days: int = 30) -> dict:
 
 
 @celery_app.task(
-    name="app.tasks.cleanup_tasks.optimize_database",
+    name="core.tasks.optimize_database",
     base=DatabaseTask
 )
 def optimize_database() -> dict:

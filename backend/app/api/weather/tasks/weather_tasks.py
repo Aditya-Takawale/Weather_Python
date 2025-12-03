@@ -1,15 +1,14 @@
 """
 Weather Data Fetching Tasks
 Celery tasks for fetching weather data from OpenWeatherMap API
-Updated to use OOP architecture
 """
 
 import asyncio
 from celery import Task
-from .celery_app import celery_app
-from ..config.database import DatabaseManager
-from ..api.weather.weather_service import WeatherService
-from ..utils.logger import get_logger
+from ....core.celery.celery_app import celery_app
+from ....config.database import DatabaseManager
+from ..weather_service import WeatherService
+from ....core.logging.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -31,7 +30,7 @@ class DatabaseTask(Task):
 
 
 @celery_app.task(
-    name="app.tasks.weather_tasks.fetch_weather_data",
+    name="api.weather.tasks.fetch_weather_data",
     base=DatabaseTask,
     bind=True,
     max_retries=3,
@@ -73,7 +72,7 @@ def fetch_weather_data(self, city: str) -> dict:
 
 
 @celery_app.task(
-    name="app.tasks.weather_tasks.fetch_weather_data_on_demand",
+    name="api.weather.tasks.fetch_weather_data_on_demand",
     base=DatabaseTask
 )
 def fetch_weather_data_on_demand(city: str) -> dict:

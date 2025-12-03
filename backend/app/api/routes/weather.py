@@ -8,9 +8,9 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 
 from ...models.weather import WeatherDataResponse
-from ...services.weather_service import WeatherService
-from ...repositories.weather_repository import WeatherRepository
 from ...utils.logger import get_logger
+# Legacy file - Use ../weather/weather_router.py instead
+# Kept for backward compatibility only
 
 logger = get_logger(__name__)
 

@@ -6,7 +6,7 @@ Run this script to initialize the database and create indexes
 import asyncio
 from app.config.database import DatabaseManager
 from app.config.settings import settings
-from app.utils.logger import get_logger
+from app.core.logging import get_logger
 
 logger = get_logger(__name__)
 
