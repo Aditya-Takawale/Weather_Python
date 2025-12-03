@@ -56,19 +56,30 @@ class BaseRepository(Generic[T]):
             self.logger.error("Error finding document by id %s: %s", id, e)
             return None
     
-    async def find_one(self, filter_dict: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def find_one(
+        self,
+        filter_dict: Dict[str, Any],
+        sort: Optional[List[tuple]] = None
+    ) -> Optional[Dict[str, Any]]:
         """
         Find single document by filter
         
         Args:
             filter_dict: MongoDB filter query
+            sort: Sort specification as list of (field, direction) tuples
             
         Returns:
             Document dictionary or None
         """
         try:
-            result = await self.collection.find_one(filter_dict)
-            return result
+            if sort:
+                # Use find with sort and limit 1
+                cursor = self.collection.find(filter_dict).sort(sort).limit(1)
+                results = await cursor.to_list(length=1)
+                return results[0] if results else None
+            else:
+                result = await self.collection.find_one(filter_dict)
+                return result
         except Exception as e:
             self.logger.error("Error finding document: %s", e)
             return None
