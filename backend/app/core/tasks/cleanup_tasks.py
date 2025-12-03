@@ -4,11 +4,11 @@ System-level Celery tasks for cleaning up old data across all features
 """
 
 import asyncio
-from ...celery.celery_app import celery_app
-from ....api.weather.tasks.weather_tasks import DatabaseTask
-from ....api.weather.weather_repository import WeatherRepository
-from ....api.alerts.alert_repository import AlertRepository
-from ...logging.logger import get_logger
+from ..celery.celery_app import celery_app
+from ...api.weather.tasks.weather_tasks import DatabaseTask
+from ...api.weather.weather_repository import WeatherRepository
+from ...api.alerts.alert_repository import AlertRepository
+from ..logging.logger import get_logger
 
 logger = get_logger(__name__)
 
