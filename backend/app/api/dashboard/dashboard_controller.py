@@ -69,11 +69,8 @@ class DashboardController(BaseController):
             
             self.logger.info("Dashboard summary served for %s", city)
             
-            return self.success_response(
-                data=response.model_dump(),
-                message=f"Dashboard summary for {city}",
-                status_code=status.HTTP_200_OK
-            )
+            # Return the response model directly (already has success/data structure)
+            return response.model_dump()
             
         except NotFoundException as e:
             return self.handle_exception(e)

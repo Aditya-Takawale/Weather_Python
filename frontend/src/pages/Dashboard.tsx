@@ -63,39 +63,15 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  // Error State
-  if (weatherError && !weatherData) {
-    return (
-      <>
-        <Header lastUpdated={lastUpdated} onRefresh={handleRefresh} loading={false} />
-        <Container maxWidth="xl" sx={{ mt: 4 }}>
-          <Alert severity="error" sx={{ borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Failed to Load Weather Data
-            </Typography>
-            <Typography variant="body2">{weatherError}</Typography>
-          </Alert>
-        </Container>
-      </>
-    );
-  }
+  // Show error message at top but still render dashboard with empty data
+  const hasError = weatherError && !weatherData;
+  const hasNoData = !weatherData || !weatherData.current_weather;
 
-  // No Data State
-  if (!weatherData) {
-    return (
-      <>
-        <Header lastUpdated={lastUpdated} onRefresh={handleRefresh} loading={false} />
-        <Container maxWidth="xl" sx={{ mt: 4 }}>
-          <Alert severity="info" sx={{ borderRadius: 2 }}>
-            <Typography variant="h6">No Weather Data Available</Typography>
-            <Typography variant="body2">
-              Please wait for the system to collect weather data.
-            </Typography>
-          </Alert>
-        </Container>
-      </>
-    );
-  }
+  // Additional safety checks for nested data - handle null/undefined weatherData
+  const currentWeather = (weatherData && weatherData.current_weather) || {};
+  const todayStats = (weatherData && weatherData.today_stats) || { temp_min: 0, temp_max: 0 };
+  const hourlyTrend = (weatherData && weatherData.hourly_trend) || [];
+  const dailyTrend = (weatherData && weatherData.daily_trend) || [];
 
   return (
     <>
@@ -105,8 +81,22 @@ const Dashboard: React.FC = () => {
         loading={weatherLoading}
       />
       
+      {/* Show error/info alert at top if there's an issue */}
+      {(hasError || hasNoData) && (
+        <Container maxWidth="xl" sx={{ mt: 2 }}>
+          <Alert severity={hasError ? "error" : "info"} sx={{ borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              {hasError ? "Failed to Load Weather Data" : "No Weather Data Available"}
+            </Typography>
+            <Typography variant="body2">
+              {hasError ? weatherError : "Please wait for the system to collect weather data."}
+            </Typography>
+          </Alert>
+        </Container>
+      )}
+      
       {/* Weather Animation - Full Screen */}
-      {weatherData && <WeatherAnimation weather={weatherData.current_weather.weather_main} />}
+      {currentWeather.weather_main && <WeatherAnimation weather={currentWeather.weather_main} />}
 
       <Container maxWidth={false} sx={{ mt: 2, mb: 2, px: 3, maxWidth: '1600px', mx: 'auto', position: 'relative', zIndex: 2 }}>
         <Grid container spacing={2.5}>
@@ -128,10 +118,10 @@ const Dashboard: React.FC = () => {
               }}
             >
               <TemperatureGauge
-                temperature={weatherData.current_weather.temperature}
-                min={weatherData.today_stats.temp_min}
-                max={weatherData.today_stats.temp_max}
-                weather={weatherData.current_weather.weather_main}
+                temperature={currentWeather.temperature || 0}
+                min={todayStats.temp_min || 0}
+                max={todayStats.temp_max || 0}
+                weather={currentWeather.weather_main || 'Unknown'}
                 date={format(new Date(), 'EEEE, HH:mm')}
               />
             </Box>
@@ -154,7 +144,7 @@ const Dashboard: React.FC = () => {
                 transition: 'background 0.3s ease, box-shadow 0.3s ease',
               }}
             >
-              <HourlyBarChart data={weatherData.hourly_trend} />
+              <HourlyBarChart data={hourlyTrend} dailyFallback={dailyTrend} />
             </Box>
 
             {/* Highlights Section */}
@@ -173,53 +163,53 @@ const Dashboard: React.FC = () => {
               }}>
                 <HighlightCard
                   title="Pressure"
-                  value={weatherData.current_weather.pressure}
+                  value={currentWeather.pressure || 0}
                   unit="hPa"
-                  subtitle={weatherData.current_weather.pressure > 1013 ? 'High' : weatherData.current_weather.pressure < 1013 ? 'Low' : 'Normal'}
+                  subtitle={(currentWeather.pressure || 0) > 1013 ? 'High' : (currentWeather.pressure || 0) < 1013 ? 'Low' : 'Normal'}
                   color="#FF6B35"
                 />
               </Grid>
               <Grid item xs={6} md={4}>
                 <HighlightCard
                   title="Wind Status"
-                  value={weatherData.current_weather.wind_speed.toFixed(1)}
+                  value={(currentWeather.wind_speed || 0).toFixed(1)}
                   unit="km/h"
-                  subtitle={weatherData.current_weather.wind_speed < 5 ? 'Light breeze' : weatherData.current_weather.wind_speed < 20 ? 'Moderate wind' : 'Strong wind'}
+                  subtitle={(currentWeather.wind_speed || 0) < 5 ? 'Light breeze' : (currentWeather.wind_speed || 0) < 20 ? 'Moderate wind' : 'Strong wind'}
                   color="#00D9FF"
                 />
               </Grid>
               <Grid item xs={6} md={4}>
                 <HighlightCard
                   title="Sunrise & Sunset"
-                  value={weatherData.current_weather.sunrise ? format(new Date(weatherData.current_weather.sunrise), 'h:mm a') : 'N/A'}
-                  subtitle={weatherData.current_weather.sunset ? format(new Date(weatherData.current_weather.sunset), 'h:mm a') : 'N/A'}
+                  value={currentWeather.sunrise ? format(new Date(currentWeather.sunrise), 'h:mm a') : 'N/A'}
+                  subtitle={currentWeather.sunset ? format(new Date(currentWeather.sunset), 'h:mm a') : 'N/A'}
                   color="#FFD700"
                 />
               </Grid>
               <Grid item xs={6} md={4}>
                 <HighlightCard
                   title="Humidity"
-                  value={weatherData.current_weather.humidity}
+                  value={currentWeather.humidity || 0}
                   unit="%"
-                  subtitle={weatherData.current_weather.humidity > 70 ? 'High' : weatherData.current_weather.humidity < 30 ? 'Low' : 'Normal'}
+                  subtitle={(currentWeather.humidity || 0) > 70 ? 'High' : (currentWeather.humidity || 0) < 30 ? 'Low' : 'Normal'}
                   color="#4FC3F7"
                 />
               </Grid>
               <Grid item xs={6} md={4}>
                 <HighlightCard
                   title="Visibility"
-                  value={(weatherData.current_weather.visibility / 1000).toFixed(1)}
+                  value={((currentWeather.visibility || 0) / 1000).toFixed(1)}
                   unit="km"
-                  subtitle={(weatherData.current_weather.visibility / 1000) > 10 ? 'Excellent' : (weatherData.current_weather.visibility / 1000) > 5 ? 'Good' : 'Poor'}
+                  subtitle={((currentWeather.visibility || 0) / 1000) > 10 ? 'Excellent' : ((currentWeather.visibility || 0) / 1000) > 5 ? 'Good' : 'Poor'}
                   color="#00E676"
                 />
               </Grid>
               <Grid item xs={6} md={4}>
                 <HighlightCard
                   title="Cloud Cover"
-                  value={weatherData.current_weather.clouds}
+                  value={currentWeather.clouds || 0}
                   unit="%"
-                  subtitle={weatherData.current_weather.clouds < 20 ? 'Clear sky' : weatherData.current_weather.clouds < 60 ? 'Partly cloudy' : 'Overcast'}
+                  subtitle={(currentWeather.clouds || 0) < 20 ? 'Clear sky' : (currentWeather.clouds || 0) < 60 ? 'Partly cloudy' : 'Overcast'}
                   color="#B388FF"
                 />
               </Grid>
@@ -229,7 +219,7 @@ const Dashboard: React.FC = () => {
 
         {/* Bottom Section: 7-Day Trend (Full Width) */}
         <Box sx={{ mt: 2.5 }}>
-          <DailyTrendChart data={weatherData.daily_trend} />
+          <DailyTrendChart data={dailyTrend} />
         </Box>
       </Container>
     </>

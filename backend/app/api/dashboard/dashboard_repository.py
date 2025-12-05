@@ -32,9 +32,8 @@ class DashboardRepository(BaseRepository[DashboardSummary]):
         try:
             document = summary.model_dump()
             
-            # Use raw collection for replace_one (not in base repository)
-            collection = self._collection
-            result = await collection.replace_one(
+            # Use collection property for lazy loading
+            result = await self.collection.replace_one(
                 {"city": summary.city, "summary_type": summary.summary_type},
                 document,
                 upsert=True

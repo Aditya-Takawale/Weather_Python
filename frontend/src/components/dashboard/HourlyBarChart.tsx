@@ -5,24 +5,62 @@
 
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
-import type { HourlyTrend } from '../../types/weather.types';
+import type { HourlyTrend, DailyTrend } from '../../types/weather.types';
 
 interface HourlyBarChartProps {
   data: HourlyTrend[];
+  dailyFallback?: DailyTrend[];
 }
 
-const HourlyBarChart: React.FC<HourlyBarChartProps> = ({ data }) => {
+const HourlyBarChart: React.FC<HourlyBarChartProps> = ({ data, dailyFallback = [] }) => {
   const { isDarkMode } = useTheme();
-  const recentData = data.slice(-8);
-  const maxTemp = Math.max(...recentData.map(d => d.temperature));
-  const minTemp = Math.min(...recentData.map(d => d.temperature));
+  
+  // If no hourly data, use daily data as fallback
+  const useDaily = !data || data.length === 0;
+  const displayData = useDaily ? dailyFallback.slice(-7) : data.slice(-8);
+  
+  // If no data available at all, show message
+  if (!displayData || displayData.length === 0) {
+    return (
+      <Box>
+        <Typography variant="h6" fontWeight={700} gutterBottom sx={{ color: isDarkMode ? 'white' : '#1a1a2e' }}>
+          {useDaily ? 'Recent Days' : 'Today'}
+        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 120,
+            px: 2,
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'rgba(26,26,46,0.6)',
+              fontStyle: 'italic',
+            }}
+          >
+            Collecting weather data... Check back soon!
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+  
+  const temps = useDaily 
+    ? displayData.map((d: any) => d.temp_avg)
+    : displayData.map((d: any) => d.temperature);
+  const maxTemp = Math.max(...temps);
+  const minTemp = Math.min(...temps);
 
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} gutterBottom sx={{ color: isDarkMode ? 'white' : '#1a1a2e' }}>
-        Today
+        {useDaily ? 'Recent Days' : 'Today'}
       </Typography>
       <Box
         sx={{
@@ -34,8 +72,13 @@ const HourlyBarChart: React.FC<HourlyBarChartProps> = ({ data }) => {
           px: 2,
         }}
       >
-        {recentData.map((item, index) => {
-          const heightPercent = ((item.temperature - minTemp) / (maxTemp - minTemp)) * 100;
+        {displayData.map((item: any, index: number) => {
+          const temp = useDaily ? item.temp_avg : item.temperature;
+          const heightPercent = ((temp - minTemp) / (maxTemp - minTemp)) * 100;
+          const timeLabel = useDaily 
+            ? format(parseISO(item.date), 'MMM d')
+            : format(new Date(item.hour), 'ha');
+          
           return (
             <Box
               key={index}
@@ -56,7 +99,7 @@ const HourlyBarChart: React.FC<HourlyBarChartProps> = ({ data }) => {
                   mb: 0.5,
                 }}
               >
-                {Math.round(item.temperature)}°
+                {Math.round(temp)}°
               </Typography>
               <Box
                 sx={{
@@ -87,7 +130,7 @@ const HourlyBarChart: React.FC<HourlyBarChartProps> = ({ data }) => {
                   mt: 0.5,
                 }}
               >
-                {format(new Date(item.hour), 'ha')}
+                {timeLabel}
               </Typography>
             </Box>
           );
